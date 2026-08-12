@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TravieeC — Customer Booking Flow V1.5</title>
+<title>TravieeC — Customer Booking Flow V1.6</title>
 <style>
 :root{
   --bg:#080808;--panel:#111;--panel2:#171717;--text:#f6f1e5;--muted:#aaa18e;
@@ -70,6 +70,11 @@ input,select,textarea{width:100%;padding:13px;border-radius:11px;border:1px soli
 .success{border:1px solid #536a44;background:#10160d;border-radius:12px;padding:12px;color:var(--ok);margin:12px 0}
 .qa-log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:pre-wrap;max-height:220px;overflow:auto;background:#090909;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}
 .request-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--gold2);font-weight:900;letter-spacing:.5px}
+.question-block{border-top:1px solid #221f18;padding-top:4px;margin-top:8px}
+.question-block:first-child{border-top:0}
+.scope-detail{color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}
+.confirmed-card{border:2px solid #678650;background:#10170d;border-radius:18px;padding:20px;margin:12px 0}
+.confirmed-card h2{color:var(--ok);font-size:30px;margin-bottom:12px}
 @media(max-width:650px){.topbar{align-items:flex-start}.qty-row,.room-grid{grid-template-columns:1fr 88px}.summary-row{align-items:flex-start}.summary-actions{max-width:110px}.summary-select{max-width:88px}}
 
 h2,h3{margin-top:0}
@@ -84,7 +89,7 @@ hr{border:0;border-top:1px solid var(--line)}
   <header class="hero">
     <div class="brand">TRAVIEEC</div>
     <div class="tag">ONE CALL. A LOT GETS DONE.</div>
-    <p class="muted">Build your service call, see your estimate, choose your timing, and test the complete booking path.</p>
+    <p class="muted">Build your service call, organize a multi-task visit, and keep every part of your punch list structured and easy to understand.</p>
   </header>
 
 
@@ -190,6 +195,7 @@ hr{border:0;border-top:1px solid var(--line)}
     <div id="summary"></div>
     <div class="total"><span>Estimated total</span><strong id="grandTotal">$0</strong></div>
     <div id="savings" class="save hidden"></div>
+    <div id="technicianDiscount" class="save hidden"></div>
     <div id="flags" class="notice hidden"></div>
     <p class="muted" style="font-size:12px;line-height:1.5">
       This estimate is based on the details provided and assumes normal service conditions. Photos and project details are reviewed before confirmation. If unforeseen conditions change the scope, additional work and pricing are explained and approved before proceeding.
@@ -248,15 +254,15 @@ hr{border:0;border-top:1px solid var(--line)}
 
 
 <script>
-/* BYSC V1.5 layer map: Layer 1 Core primitives; Layer 2 TravieeC catalog/questionnaire values; Layer 3 integrations simulated in TEST MODE; Layer 4 brand/theme in CSS. */
+/* BYSC V1.6 layer map: Core mechanics; TravieeC configuration; simulated adapters; theme/UI. */
 const $ = id => document.getElementById(id);
 const money = n => '$' + Math.round(n).toLocaleString();
 
 
 
-const QA_KEY='travieec_bysc_v15_qa';
-const SESSION_KEY='travieec_bysc_v15_session';
-const REQUEST_KEY='travieec_bysc_v15_requests';
+const QA_KEY='travieec_bysc_v16_qa';
+const SESSION_KEY='travieec_bysc_v16_session';
+const REQUEST_KEY='travieec_bysc_v16_requests';
 let qaEvents=[];
 function repeatFactor(index){return index===0?1:index===1?.85:.78}
 function repeatSum(base,qty){let v=0;for(let i=0;i<qty;i++)v+=base*repeatFactor(i);return v}
@@ -278,7 +284,8 @@ const categories = [
   ['drywall','Drywall Repair','Patch, finish and paint'],
   ['painting','Painting','Touch-ups through full interiors'],
   ['yard','Yard Services','Cleanup, trimming and irrigation'],
-  ['cleaning','House Cleaning','Standard, deep or move-out']
+  ['cleaning','House Cleaning','Standard, deep or move-out'],
+  ['quickfix','Quick Fixes & Small Repairs','Defined minor repairs without a larger primary service']
 ];
 
 
@@ -291,7 +298,8 @@ const categoryMeta = {
   drywall:['Drywall Repair','Tell me what the damage looks like and how finished you want the repair.'],
   painting:['Painting','Tell me what you want painted and how much prep is needed.'],
   yard:['Yard Services','Tell me what needs attention outside.'],
-  cleaning:['House Cleaning','Tell me about the home and the level of cleaning you need.']
+  cleaning:['House Cleaning','Tell me about the home and the level of cleaning you need.'],
+  quickfix:['Quick Fixes & Small Repairs','Choose this when the defined minor repairs are the whole visit. You can combine eligible items and quantities.']
 };
 
 
@@ -367,7 +375,7 @@ function renderDetails(){
         <option value="225,60,Washer + electric dryer">Washer + electric dryer</option><option value="250,75,Washer + gas dryer">Washer + gas dryer</option>
         <option value="225,75,Dishwasher replacement">Dishwasher replacement</option><option value="175,45,Electric range replacement">Electric range</option><option value="200,60,Gas range replacement">Gas range</option>
         <option value="225,75,OTR microwave replacement">OTR microwave</option><option value="225,75,Range hood replacement">Range hood</option><option value="225,90,In-counter cooktop">In-counter cooktop</option>
-        <option value="175,30,Garbage disposal replacement">Garbage disposal replacement</option><option value="295,120,New garbage disposal installation">New disposal installation</option>
+        <option value="175,30,Garbage disposal replacement">Garbage disposal</option>
       </select>
       <label>Is this replacing an existing appliance in the same location?</label><select id="aExisting"><option value="yes">Yes</option><option value="no">No, new location</option><option value="unsure">Not sure</option></select>
       <label>Are the required hookups already present?</label><select id="aHookups"><option value="yes">Yes</option><option value="unsure">Not sure</option><option value="no">No / modifications needed</option></select>
@@ -376,6 +384,7 @@ function renderDetails(){
     <div id="aDiagWrap" class="hidden">
       <label>Which appliance?</label><select id="aDiagItem"><option>Refrigerator / Freezer</option><option>Washer</option><option>Dryer</option><option>Dishwasher</option><option>Range / Oven</option><option>Microwave</option><option>Garbage Disposal</option></select>
       <label>What’s happening?</label><select id="aSymptom"></select>
+      <div id="aOtherWrap" class="hidden"><label>Describe the issue</label><textarea id="aOther" rows="3" placeholder="Tell me what the appliance is doing."></textarea></div>
     </div>`;
 
   if(category==='plumbing') h = `
@@ -395,6 +404,7 @@ function renderDetails(){
 
   if(category==='tv') h = `
     <label>TV size</label><select id="tvItem"><option value="150,30,TV mounting up to 55 in">Up to 55 in</option><option value="175,40,TV mounting 56–75 in">56–75 in</option><option value="225,55,TV mounting 76–85 in">76–85 in</option><option value="275,70,TV mounting 86–90 in">86–90 in</option><option value="0,0,TV mounting over 90 in">Over 90 in — review</option></select>
+    <label>TV quantity</label><select id="tvQty">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select>
     <label>Wall surface</label><select id="tvWall"><option value="0,0">Drywall / wood studs</option><option value="50,20">Brick / concrete</option><option value="75,30">Tile</option><option value="100,40">Stone</option><option value="0,0">Not sure</option></select>
     <label>Mounting height</label><select id="tvHeight"><option value="0,0">Standard — mounting point at 5 ft or below</option><option value="50,20">High wall — mounting point above 5 ft / ladder required</option></select>
     <label>Mount type</label><select id="tvMount"><option>Fixed</option><option>Tilting</option><option>Full motion / articulating</option><option>Not sure</option></select><p class="helper">Mount type does not change the installation price.</p>
@@ -405,6 +415,7 @@ function renderDetails(){
   if(category==='electrical') h = `
     <label>What do you need?</label><select id="eMode"><option value="install">Install / replace</option><option value="diag">Diagnose / repair</option></select>
     <div id="eInstallWrap"><label>Service</label><select id="eItem"><option value="130,15,Outlet / switch replacement">Outlet / switch replacement</option><option value="145,15,GFCI replacement">GFCI replacement</option><option value="145,15,Dimmer replacement">Dimmer replacement</option><option value="150,20,Smart switch / dimmer">Smart switch / dimmer</option><option value="145,15,USB / USB-C outlet">USB / USB-C outlet</option><option value="150,30,Standard light fixture">Standard light fixture</option><option value="150,30,Vanity light">Vanity light</option><option value="150,30,Pendant light">Pendant light</option><option value="195,45,Chandelier">Chandelier</option><option value="225,60,Ceiling fan replacement">Ceiling fan replacement</option><option value="350,120,New ceiling fan location">New ceiling fan location</option><option value="150,30,Smart thermostat">Smart thermostat</option><option value="150,30,Smart doorbell">Smart doorbell</option><option value="175,45,Smart camera / floodlight">Smart camera / floodlight</option><option value="175,15,Breaker replacement">Breaker replacement</option><option value="175,20,240V outlet replacement">240V outlet replacement</option></select>
+      <label>Quantity</label><select id="eQty">${[1,2,3,4,5,6,7,8].map(n=>`<option>${n}</option>`).join('')}</select>
       <label>Existing location?</label><select id="eExisting"><option value="yes">Yes</option><option value="no">No / new location</option><option value="unsure">Not sure</option></select></div>
     <div id="eDiagWrap" class="hidden"><label>What is having the problem?</label><select id="eDiagArea"><option>Outlet / receptacle</option><option>Switch / dimmer</option><option>Light fixture</option><option>Ceiling fan</option><option>Breaker / circuit</option><option>Smart-home device</option><option>Something else</option></select>
       <label>What is happening?</label><select id="eDiagSymptom"><option>No power</option><option>Intermittent power</option><option>Trips breaker / GFCI</option><option>Flickering / inconsistent operation</option><option>Device is hot / buzzing / smells unusual</option><option>Something else</option></select>
@@ -435,20 +446,23 @@ function renderDetails(){
   if(category==='cleaning') h = `
     <label>Cleaning level</label><select id="cType"><option value="1,Standard house cleaning">Standard cleaning</option><option value="1.55,Deep house cleaning">Deep cleaning</option><option value="1.7,Move-in / move-out cleaning">Move-in / move-out</option></select>
     <label>Cleaning scope</label><select id="cScope"><option value="whole">Whole home</option><option value="rooms">Selected rooms only</option></select>
-    <div id="cWholeWrap"><label>Home size</label><select id="cSize"><option value="105">Under 750 sq ft</option><option value="150">750–1,250 sq ft</option><option value="210">1,251–1,750 sq ft</option><option value="270">1,751–2,500 sq ft</option><option value="315">Over 2,500 sq ft</option></select><label>Bathrooms</label><select id="cBaths"><option value="1">1</option><option value="1.5">1.5</option><option value="2">2</option><option value="2.5">2.5</option><option value="3">3</option><option value="4">4+</option></select></div>
+    <div id="cWholeWrap"><label>Home size</label><select id="cSize"><option value="105">Under 750 sq ft</option><option value="150">750–1,250 sq ft</option><option value="210">1,251–1,750 sq ft</option><option value="270">1,751–2,500 sq ft</option><option value="315">Over 2,500 sq ft</option></select><label>Bathrooms</label><select id="cBaths">${[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6].map(n=>`<option value="${n}">${n}</option>`).join('')}</select></div>
     <div id="cRoomsWrap" class="hidden"><p class="helper">Choose only the rooms you want cleaned. Leave the rest at 0.</p><div class="room-grid"><label>Bedrooms</label><select id="cBedrooms">${[0,1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Bathrooms</label><select id="cRoomBaths">${[0,1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Kitchens</label><select id="cKitchens"><option>0</option><option>1</option><option>2</option></select></div><div class="room-grid"><label>Living / common areas</label><select id="cLiving">${[0,1,2,3,4].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Offices / other rooms</label><select id="cOther">${[0,1,2,3,4].map(n=>`<option>${n}</option>`).join('')}</select></div></div>
     <label>Condition</label><select id="cCondition"><option value="0">Well maintained</option><option value="30">Normal lived-in</option><option value="90">Needs extra attention</option><option value="180">Heavy buildup</option></select>
-    <label>Pets / hair burden</label><select id="cPets"><option value="0">No pets / minimal hair</option><option value="15">One short-haired pet</option><option value="30">One long-haired or two pets</option><option value="60">Three+ pets / heavy hair load</option></select>
+    <label>Pets?</label><select id="cHasPets"><option value="no">No</option><option value="yes">Yes</option></select>
+    <div id="cPetQtyWrap" class="hidden"><label>Pet quantity</label><select id="cPetQty">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><input id="cPets" type="hidden" value="0">
     <div id="cMoveIncluded" class="notice hidden"><strong>Move Cleaning includes appliance and cabinet interiors.</strong><br>Those are automatically included, not separate extras.</div>
     <div class="check cInteriorExtra"><input id="cOven" type="checkbox"><span>Inside oven</span></div><div class="check cInteriorExtra"><input id="cFridge" type="checkbox"><span>Inside refrigerator</span></div><div class="check cInteriorExtra"><input id="cCabinets" type="checkbox"><span>Inside cabinets</span></div><div class="check"><input id="cBaseboards" type="checkbox"><span>Detailed baseboards</span></div><div class="check"><input id="cWindows" type="checkbox"><span>Interior windows</span></div><div class="check"><input id="cLaundry" type="checkbox"><span>Laundry / folding</span></div><label>Cleaning team</label><select id="cCleaners"><option value="1">One cleaner</option><option value="2">Two cleaners — faster when available</option></select>`;
 
+  if(category==='quickfix') h = `<div class="notice"><strong>Defined repairs only.</strong><br>Choose the exact repairs and quantities on the next step. If your repair is not listed, use the review route instead of Quick Fix pricing.</div>`;
   $('detailForm').innerHTML = h;
   document.querySelectorAll('#detailForm input,#detailForm select').forEach(el=>{el.addEventListener('change',calcPrimary);el.addEventListener('input',calcPrimary)});
   $('afterHours').onchange=calcPrimary;
 
   if(category==='appliance'){
-    const sync=()=>{const diag=$('aMode').value==='diag';$('aInstallWrap').classList.toggle('hidden',diag);$('aDiagWrap').classList.toggle('hidden',!diag);if(diag){$('aHaul').checked=false;updateApplianceSymptoms()}else{$('aSymptom').innerHTML=''};calcPrimary()};
-    $('aMode').addEventListener('change',sync);$('aDiagItem').addEventListener('change',()=>{updateApplianceSymptoms();calcPrimary()});sync();
+    const syncOther=()=>{const other=$('aSymptom').value==='Something else';$('aOtherWrap').classList.toggle('hidden',!other);if(!other)$('aOther').value=''};
+    const sync=()=>{const diag=$('aMode').value==='diag';$('aInstallWrap').classList.toggle('hidden',diag);$('aDiagWrap').classList.toggle('hidden',!diag);if(diag){$('aHaul').checked=false;updateApplianceSymptoms();syncOther()}else{$('aSymptom').innerHTML='';$('aOther').value=''};calcPrimary()};
+    $('aMode').addEventListener('change',sync);$('aDiagItem').addEventListener('change',()=>{updateApplianceSymptoms();syncOther();calcPrimary()});$('aSymptom').addEventListener('change',()=>{syncOther();calcPrimary()});$('aOther').addEventListener('input',calcPrimary);sync();
   }
   if(category==='plumbing'){
     const sync=()=>{const diag=$('pMode').value==='diag';$('pInstallWrap').classList.toggle('hidden',diag);$('pDiagWrap').classList.toggle('hidden',!diag);if(diag)$('pQty').value='1';else{$('pActiveLeak').value='No';$('pShutoff').value='Yes'};calcPrimary()};$('pMode').addEventListener('change',sync);sync();
@@ -463,9 +477,11 @@ function renderDetails(){
     const sync=()=>{$('fShelfSizeWrap').classList.toggle('hidden',!$('fItem').selectedOptions[0].textContent.includes('Bookcase'));calcPrimary()};$('fItem').addEventListener('change',sync);sync();
   }
   if(category==='cleaning'){
-    const sync=()=>{const move=$('cType').selectedOptions[0].textContent.includes('Move-');const rooms=$('cScope').value==='rooms';$('cWholeWrap').classList.toggle('hidden',rooms);$('cRoomsWrap').classList.toggle('hidden',!rooms);$('cMoveIncluded').classList.toggle('hidden',!move);document.querySelectorAll('.cInteriorExtra').forEach(x=>x.classList.toggle('hidden',move));if(move)['cOven','cFridge','cCabinets'].forEach(id=>$(id).checked=false);if($('cCondition').value==='180'&&$('cType').value.startsWith('1,')){$('cType').value='1.55,Deep house cleaning';logQA('cleaning-heavy-buildup-forced-deep')};calcPrimary()};$('cType').addEventListener('change',sync);$('cScope').addEventListener('change',sync);$('cCondition').addEventListener('change',sync);sync();
+    const sync=()=>{const move=$('cType').selectedOptions[0].textContent.includes('Move-');const rooms=$('cScope').value==='rooms',pets=$('cHasPets').value==='yes';$('cWholeWrap').classList.toggle('hidden',rooms);$('cRoomsWrap').classList.toggle('hidden',!rooms);$('cPetQtyWrap').classList.toggle('hidden',!pets);if(!pets)$('cPetQty').value='1';$('cPets').value=pets?Math.min(60,+$('cPetQty').value*15):0;$('cMoveIncluded').classList.toggle('hidden',!move);document.querySelectorAll('.cInteriorExtra').forEach(x=>x.classList.toggle('hidden',move));if(move)['cOven','cFridge','cCabinets'].forEach(id=>$(id).checked=false);if($('cCondition').value==='180'&&$('cType').value.startsWith('1,')){$('cType').value='1.55,Deep house cleaning';logQA('cleaning-heavy-buildup-forced-deep')};calcPrimary()};$('cType').addEventListener('change',sync);$('cScope').addEventListener('change',sync);$('cCondition').addEventListener('change',sync);$('cHasPets').addEventListener('change',sync);$('cPetQty').addEventListener('change',sync);sync();
   }
-  if(!['appliance','plumbing','tv','electrical','furniture','cleaning'].includes(category)) calcPrimary();
+  if(category==='quickfix') calcPrimary();
+  if(!['appliance','plumbing','tv','electrical','furniture','cleaning','quickfix'].includes(category)) calcPrimary();
+  setupSequentialDisclosure();
 }
 
 const applianceSymptoms = {
@@ -562,6 +578,7 @@ function renderAddons(){
     return `<div class="addon"><div class="addon-head"><label><input type="checkbox" class="addonCheck" data-id="${a.id}"><span>${a.name}</span></label><strong>${a.price?'+ '+money(a.price):'Review'}</strong></div><div class="addon-desc">${a.desc||''}</div></div>`;
   }).join('');
   document.querySelectorAll('.addonCheck,.quickTask,.quickQty').forEach(x=>x.addEventListener('change',()=>{const c=document.querySelector('.addonCheck[data-id="customPunch"]');$('customPunchWrap').classList.toggle('hidden',!(c&&c.checked));updateBundle()}));
+  if(category==='quickfix')document.querySelectorAll('.addonCheck').forEach(x=>x.closest('.addon').classList.toggle('hidden',x.dataset.id!=='customPunch'));
 }
 
 function totals(){
@@ -575,7 +592,7 @@ function totals(){
 }
 function updateBundle(){
   const t=totals();
-  $('bundlePrice').textContent = primary.price===0?'Review':money(t.total);
+  $('bundlePrice').textContent = primary.price===0&&category!=='quickfix'?'Review':money(t.total);
   $('bundleTime').textContent=customerTime(t.displayMins);
 }
 
@@ -706,19 +723,100 @@ $('confirmButton').addEventListener('click',()=>{
     if(rand()<.08){bookingState='Authorization Failed';$('confirmState').innerHTML='<strong>TEST MODE: authorization failed.</strong><br>No appointment was created and nothing was captured.';btn.disabled=false;btn.textContent='RETRY AUTHORIZE & BOOK';logQA('authorization-failed');return}
     bookingState='Final Availability Check';btn.textContent='RECHECKING SLOT…';logQA('authorization-approved');
     setTimeout(()=>{
-      if(rand()<.22){bookingState='Slot Lost Before Capture';$('confirmState').innerHTML='<strong>That time was just taken.</strong><br>Your TEST MODE authorization was not captured. Choose another available time.';btn.disabled=false;btn.textContent='BACK TO TIMES';btn.onclick=()=>{btn.onclick=null;goTo(6)};logQA('slot-lost-before-capture',{slot:selectedSlot});return}
-      bookingState='Confirmed';requestId=requestId||newRequestId();const rec={requestId,state:bookingState,category,primary:primary.name,scope:totals().rows.map(x=>({name:x.name,price:x.price})),scopeText:$('customPunch').value||'',date:$('scheduleDate').value,slot:selectedSlot,total:dep.total,deposit:dep.amount,createdAt:new Date().toISOString()};saveRequestRecord(rec);$('confirmState').className='success';$('confirmState').innerHTML=`<strong>Booked in TEST MODE.</strong><br>Request ID: <span class="request-id">${requestId}</span><br>${$('scheduleDate').value} at ${new Date('2000-01-01T'+selectedSlot).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}<br>No real card was charged and no live appointment was created.`;btn.textContent='TEST BOOKING CONFIRMED';logQA('appointment-created',{requestId,slot:selectedSlot});logQA('deposit-captured-simulated',{requestId,amount:dep.amount});renderQaLog();
+      if(rand()<.22){bookingState='Slot Lost Before Capture';$('confirmState').innerHTML='<strong>That time was just taken.</strong><br>Your TEST MODE authorization was not captured. Choose another available time.';btn.disabled=false;btn.textContent='CHOOSE ANOTHER TIME';selectedSlot='';logQA('slot-lost-before-capture',{slot:selectedSlot});goTo(6);return}
+      bookingState='Confirmed';requestId=requestId||newRequestId();const rec={requestId,state:bookingState,category,primary:primary.name,scope:totals().rows.map(x=>({name:x.name,price:x.price})),scopeDetails:collectScopeDetails(),scopeText:$('customPunch').value||'',date:$('scheduleDate').value,slot:selectedSlot,address:$('address').value,total:dep.total,deposit:dep.amount,remaining:dep.remaining,quickFixOutcome:'Not yet recorded',createdAt:new Date().toISOString()};saveRequestRecord(rec);renderConfirmedCard(rec);btn.classList.add('hidden');logQA('appointment-created',{requestId,slot:selectedSlot});logQA('deposit-captured-simulated',{requestId,amount:dep.amount});renderQaLog();
     },500);
   },500);
 });
 
 $('startOver').addEventListener('click',()=>{if(!confirm('Start over? This clears the current unsaved estimate, scope, schedule and TEST MODE session. Submitted Request IDs remain in local history.'))return;logQA('start-over');sessionStorage.removeItem(SESSION_KEY);location.reload()});
-$('exportQa').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(qaEvents,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travieec-bysc-v1.5-qa-events.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
-window.addEventListener('load',()=>{try{qaEvents=JSON.parse(localStorage.getItem(QA_KEY)||'[]')}catch(e){qaEvents=[]}logQA('v1.5-loaded',{session:sessionSeed()})});
+$('exportQa').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(qaEvents,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travieec-bysc-v1.6-qa-events.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+window.addEventListener('load',()=>{try{qaEvents=JSON.parse(localStorage.getItem(QA_KEY)||'[]')}catch(e){qaEvents=[]}logQA('v1.6-loaded',{session:sessionSeed()})});
 
 
 
 renderCategories();
+</script>
+<script>
+/* V1.6 Core extensions. TravieeC values remain in the configuration above. */
+let technicianDiscount=0;
+const v15CalcPrimary=calcPrimary;
+calcPrimary=function(){
+  if(category==='quickfix'){
+    primary={name:'Quick Fixes & Small Repairs',price:0,displayMins:0,internalMins:0,flags:[],photo:'Photos of each repair help confirm that it fits the defined Quick Fix scope.',invasive:false};
+    updatePrimaryDisplay();return;
+  }
+  v15CalcPrimary();
+  const root=$('detailForm'),branchHidden=el=>{let p=el.parentElement;while(p&&p!==root){if(p.classList.contains('hidden'))return true;p=p.parentElement}return false};
+  const pending=[...root.querySelectorAll('select,textarea')].some(el=>!branchHidden(el)&&el.dataset.sequence!==undefined&&el.dataset.answered!=='true');
+  if(pending){primary={...primary,price:0,displayMins:0,internalMins:0,flags:['Complete the visible questions to calculate the estimate.']};updatePrimaryDisplay();return}
+  if(category==='appliance'&&$('aMode').value==='diag'){
+    const issue=$('aSymptom').value==='Something else'&&$('aOther').value.trim()?$('aOther').value.trim():$('aSymptom').value;
+    primary.name=`Appliance diagnostic — ${$('aDiagItem').value} · ${issue}`;
+  }
+  if(category==='tv'){
+    const q=+$('tvQty').value,[basePrice,baseMins,baseName]=split3('tvItem');
+    primary.price+=Math.round(repeatSum(basePrice,q))-basePrice;primary.internalMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.displayMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.name=baseName+(q>1?` × ${q}`:'');
+  }
+  if(category==='electrical'&&$('eMode').value==='install'){
+    const q=+$('eQty').value,[basePrice,baseMins,baseName]=split3('eItem');
+    primary.price+=Math.round(repeatSum(basePrice,q))-basePrice;primary.internalMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.displayMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.name=baseName+(q>1?` × ${q}`:'');
+  }
+  if(category==='furniture'&&$('fItem').selectedOptions[0].textContent.includes('Bookcase')){
+    const q=+$('fQty').value,oldBase=30,newBase=({small:24,medium:40,large:65,unsure:40}[$('fShelfSize').value]);
+    const delta=Math.round(repeatSum(newBase,q)-repeatSum(oldBase,q));primary.internalMins+=delta;primary.displayMins+=delta;primary.price=Math.max(130,130+Math.max(0,primary.internalMins/60-1)*75);
+  }
+  updatePrimaryDisplay();
+};
+
+const v15Totals=totals;
+totals=function(){
+  const t=v15Totals();
+  if(category==='quickfix'){
+    let total=0,mins=0,standalone=0;const counters={};
+    t.rows.filter(r=>r.source==='quick').forEach(r=>{const cls=r.id,q=+(r.name.match(/(\d+)$/)||[,1])[1],base=addonData.find(a=>a.id===cls);counters[cls]=counters[cls]||0;let price=0,time=0;for(let i=0;i<q;i++){const f=repeatFactor(counters[cls]++);price+=base.standalone*f;time+=base.mins*f}r.price=Math.round(price);r.standalone=r.price;r.mins=Math.round(time);total+=r.price;mins+=r.mins;standalone+=r.standalone});
+    t.total=total;t.standalone=standalone;t.displayMins=mins;t.internalMins=mins;
+  }
+  t.technicianDiscount=technicianDiscount;t.total=Math.max(0,t.total-technicianDiscount);return t;
+};
+
+function controlLabel(el){const wrap=el.closest('.question-block')||el.parentElement;const lab=wrap&&wrap.querySelector('label');return lab?lab.textContent.trim().replace(/\s+/g,' '):el.id}
+function collectScopeDetails(){
+  if(!$('detailForm'))return[];const out=[];
+  $('detailForm').querySelectorAll('select,textarea,input:not([type="hidden"])').forEach(el=>{if(el.disabled||el.closest('.hidden'))return;let value='';if(el.type==='checkbox'){if(!el.checked)return;value=el.parentElement.textContent.trim()}else value=el.selectedOptions?el.selectedOptions[0]?.textContent.trim():el.value.trim();if(value)out.push({key:el.id,label:controlLabel(el),value})});return out;
+}
+function scopeDetailsHtml(){const d=collectScopeDetails();return d.length?`<div class="scope-detail">${d.map(x=>`<strong>${x.label}:</strong> ${x.value}`).join('<br>')}</div>`:''}
+
+function setupSequentialDisclosure(){
+  const root=$('detailForm');if(!root||category==='quickfix')return;
+  const controls=[...root.querySelectorAll('select,textarea')].filter(x=>x.type!=='hidden');
+  controls.forEach((el,i)=>{el.dataset.sequence=String(i);el.dataset.answered='false'});
+  const branchHidden=el=>{let p=el.parentElement;while(p&&p!==root){if(p.classList.contains('hidden'))return true;p=p.parentElement}return false};
+  const refresh=()=>{let nextOpen=true;controls.forEach(el=>{const relevant=!branchHidden(el);const label=el.previousElementSibling&&el.previousElementSibling.tagName==='LABEL'?el.previousElementSibling:null;const show=relevant&&nextOpen;el.classList.toggle('hidden',!show);if(label)label.classList.toggle('hidden',!show);if(show&&el.dataset.answered!=='true')nextOpen=false})};
+  controls.forEach((el,i)=>el.addEventListener('change',()=>{el.dataset.answered='true';for(let j=i+1;j<controls.length;j++){const d=controls[j];if(d.tagName==='SELECT')d.selectedIndex=0;else d.value='';d.dataset.answered='false'}refresh();calcPrimary()}));refresh();calcPrimary();
+}
+
+const v15SetPrimaryQty=setPrimaryQty;
+setPrimaryQty=function(value){if(category==='tv')$('tvQty').value=value;else if(category==='electrical')$('eQty').value=value;else v15SetPrimaryQty(value);calcPrimary();renderSummary()};
+const v15RenderSummary=renderSummary;
+renderSummary=function(){
+  v15RenderSummary();const t=totals();
+  const first=$('summary').querySelector('.summary-row');if(first){first.querySelector('div').insertAdjacentHTML('beforeend',scopeDetailsHtml());let actions=first.querySelector('.summary-actions');if(category==='tv')actions.insertAdjacentHTML('beforeend',`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6].map(n=>`<option ${+$('tvQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`);if(category==='electrical'&&$('eMode').value==='install')actions.insertAdjacentHTML('beforeend',`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6,7,8].map(n=>`<option ${+$('eQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`)}
+  $('grandTotal').textContent=money(t.total);const efficiency=Math.max(0,t.standalone-(t.total+technicianDiscount));$('savings').classList.toggle('hidden',!efficiency);if(efficiency)$('savings').innerHTML='<strong>Bundle Efficiency applied</strong><br>Completing these services together reduces repeated visit costs compared with booking them as separate service calls.';
+  $('technicianDiscount').classList.toggle('hidden',!technicianDiscount);if(technicianDiscount)$('technicianDiscount').innerHTML=`<strong>Technician Discount</strong><br>-${money(technicianDiscount)}`;
+};
+
+const v15PrimaryReviewRequired=primaryReviewRequired;
+primaryReviewRequired=function(){if(category==='quickfix')return totals().rows.filter(x=>x.source==='quick').length===0;return v15PrimaryReviewRequired()};
+const v15RenderConfirmation=renderConfirmation;
+renderConfirmation=function(){v15RenderConfirmation();$('confirmSummary').insertAdjacentHTML('afterbegin',scopeDetailsHtml());$('confirmButton').classList.remove('hidden');$('confirmButton').disabled=false;$('confirmButton').onclick=null};
+function renderConfirmedCard(rec){
+  $('confirmTitle').textContent='Booking confirmed';$('confirmState').className='confirmed-card';$('confirmState').innerHTML=`<h2>✓ CONFIRMED!</h2><div class="copy-id"><strong>Request ID</strong> <span class="request-id">${rec.requestId}</span></div><hr><strong>${rec.date}</strong> at <strong>${new Date('2000-01-01T'+rec.slot).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</strong><br>${rec.address||'Service address on request'}<div class="scope-detail" style="margin-top:12px">${rec.scopeDetails.map(x=>`<strong>${x.label}:</strong> ${x.value}`).join('<br>')}</div><hr><strong>Deposit status:</strong> TEST MODE captured ${money(rec.deposit)}<br><strong>Estimated remaining balance:</strong> ${money(rec.remaining)}<p>No real card was charged and no live appointment was created. Keep the Request ID for reference.</p>`;
+  $('confirmSummary').classList.add('hidden');$('depositBox').classList.add('hidden');$('paymentCopy').classList.add('hidden');
+}
+$('scheduleDate').addEventListener('change',()=>{bookingState='Ready for Slot';const b=$('confirmButton');b.disabled=false;b.onclick=null;b.textContent='AUTHORIZE DEPOSIT & BOOK'});
+$('qaLog').closest('details').addEventListener('toggle',()=>{if(bookingState==='Ready for Slot'){const b=$('confirmButton');b.disabled=false;b.onclick=null}});
+window.__V16__={repeatSum,collectScopeDetails,getState:()=>({category,primary,bookingState,selectedSlot}),setTechnicianDiscount:n=>{technicianDiscount=Math.max(0,+n||0)}};
 </script>
 </body>
 </html>
