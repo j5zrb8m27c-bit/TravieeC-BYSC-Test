@@ -1,0 +1,28 @@
+TravieeC BYSC V1.6.1 Release Notes
+Date: 2026-08-15
+Release type: Stabilization / correction
+
+Implemented
+- Blank service-mode state and â€œWhat can I help you with?â€ placeholder.
+- True one-question-at-a-time disclosure with upstream invalidation and required-answer blocking.
+- Immediate live price/time after the first meaningful selection.
+- Inline Review qualifier editing and Review quantity controls.
+- Persistent Quick Fix/add-on quantities across backtracking and Review.
+- Electrical quantities 1â€“10 plus 10+; diagnostic location count remains non-pricing scope data.
+- Quick Fixes & Small Repairs catalog restored and moved to the top.
+- Global checkbox/card tap-target behavior.
+- Bundle Efficiency explanation and separated pricing structure.
+- Capacity routing for work beyond the existing normal scheduling window.
+- General Mounting primary category with sequential qualifiers and review-safe pricing.
+- Something else customer copy and exact-description persistence.
+
+Preserved
+- V1.6 confirmation, Request ID, conflict/payment recovery, scheduling increments, deposits,
+  after-hours policy, cleaning/TV/shelving behavior, and BYSC Core separation.
+
+Travis Decisions Needed
+- Approve customer-facing General Mounting price/time rules. Historical $65/hour invoices and
+  calibration cases are evidence, but they do not define item-specific flat-rate rules.
+- Approve an extended Electrical Diagnostic policy beyond the included first hour, if desired.
+- Confirm whether General Mounting 10+ quantities should share Electrical's review threshold copy.
+
