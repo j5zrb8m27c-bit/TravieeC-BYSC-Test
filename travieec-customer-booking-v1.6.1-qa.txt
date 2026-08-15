@@ -1,0 +1,43 @@
+TravieeC BYSC V1.6.1 QA Report
+Date: 2026-08-15
+
+Automated/static
+- All three inline JavaScript programs compile successfully.
+- Permanent Playwright regression suite added at tests/v1.6.1-regression.spec.js.
+- Root index and named executable are verified byte-identical before publication.
+
+Interactive browser verification passed
+- Quick Fix appears first; General Mounting appears near TV Mounting.
+- Appliance starts blank with only Q1 visible.
+- Install/replace reveals Q2 only and immediately shows $150 / Up to 1 hour.
+- Required unanswered qualifier blocks Continue inline.
+- General Mounting is blank, sequential, and safely shows Review without fabricated pricing.
+- Electrical diagnostic exposes 1â€“10 plus 10+ and remains $130 at 10+.
+- Quick Fix Toilet seat quantity 3 survives Back â†’ Continue and appears as 3 on Review.
+- Review exposes a quantity selector for the retained Quick Fix line.
+- Checkbox text/card tap handler is installed globally.
+- Bundle Efficiency and Technician Discount remain separate.
+- Capacity routing uses the existing normal scheduling window and does not emit generic no-availability.
+
+Regression coverage retained
+- Start Over; CONFIRMED screen; permanent Request ID; simulated authorization/slot recovery;
+  30-minute slots; session-stable conflicts; deposit calculation; after-hours behavior;
+  scope details; cleaning half-baths/pets; shelving size; TV quantities/hardware/recessed review;
+  multi-day review routing; materials and customer-not-ready rules.
+
+Messy customer scenario
+- Covered by persistent state mechanics and permanent test scenario: select many items, change
+  upstream answers, edit Review scope, alter quantities, remove/re-add, backtrack, use Something
+  else, Start Over, and rebuild. Invalid downstream answers are cleared; selected retained items
+  keep quantities; removed/re-added items use clean state.
+
+Known review-safe behavior
+- General Mounting has no invented flat price/time.
+- Electrical diagnostic location count does not multiply price.
+- 10+ Electrical install quantity routes for confirmation using the approved 1â€“10 repetition logic
+  only as a starting scope calculation; no bulk formula is invented.
+
+Travis Decisions Needed
+- General Mounting item pricing/time rules.
+- Extended Electrical Diagnostic policy after the included first hour.
+
