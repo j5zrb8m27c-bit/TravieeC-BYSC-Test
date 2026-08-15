@@ -1,0 +1,22 @@
+TravieeC BYSC Version Manifest
+Version: V1.6.1
+Date: 2026-08-15
+Status: QA deployment
+Source of truth: Google Drive / TravieeC BYSC Development / V1.6 source
+Deployment repository: j5zrb8m27c-bit/TravieeC-BYSC-Test
+Deployment branch: main
+Pages root: index.html
+
+Artifacts
+- travieec-customer-booking-v1.6.1.html
+- travieec-customer-booking-v1.6.1-source.txt
+- travieec-customer-booking-v1.6.1-qa.txt
+- travieec-customer-booking-v1.6.1-release-notes.txt
+- travieec-version-manifest-v1.6.1.txt
+- travieec-customer-booking-v1.6.1-source.zip
+
+Integrity
+- Root index.html is required to be identical to the named V1.6.1 executable.
+- V1.5 and V1.6 Drive artifacts remain untouched.
+- TravieeC-booking repository remains untouched.
+
