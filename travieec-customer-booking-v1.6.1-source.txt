@@ -1,9 +1,901 @@
-Get-Content : Cannot find path 'C:\Users\Travi\Documents\Codex\2026-08-15\implement-travieec-bysc-v1-6-1\work\TravieeC-
-BYSC-Test\travieec-customer-booking-v1.6.1-source.txt' because it does not exist.
-At line:2 char:1
-+ Get-Content -Raw 'travieec-customer-booking-v1.6.1-source.txt'
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (C:\Users\Travi\....6.1-source.txt:String) [Get-Content], ItemNotFoundEx 
-   ception
-    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
- 
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TravieeC â€” Customer Booking Flow V1.6.1</title>
+<style>
+:root{
+  --bg:#080808;--panel:#111;--panel2:#171717;--text:#f6f1e5;--muted:#aaa18e;
+  --gold:#d4b15d;--gold2:#f0d98f;--line:#332d21;--danger:#ffcf9a;--ok:#d9efc7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+.app{max-width:920px;margin:auto;padding:20px}
+.hero{padding:10px 2px 18px}
+.brand{font-size:31px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.tag{font-size:28px;font-weight:900;margin-top:4px}
+.muted,.helper{color:var(--muted)}
+.progress{height:6px;background:#242424;border-radius:999px;overflow:hidden}
+.progress>div{height:100%;background:var(--gold);width:14.285%;transition:.2s}
+.step-label{font-size:13px;color:var(--muted);margin:8px 0 14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.categories{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat{background:#0d0d0d;border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--text);text-align:left}
+.cat strong{display:block;color:var(--gold);font-size:16px}
+.cat span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.cat.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+label{display:block;font-size:14px;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:13px;border-radius:11px;border:1px solid var(--line);background:#0b0b0b;color:var(--text)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0}
+.check input{width:auto;margin-top:3px}
+.check small{display:block;color:var(--muted);margin-top:3px}
+.btn{background:var(--gold);color:#111;border:0;border-radius:12px;padding:13px 16px;font-weight:800;cursor:pointer}
+.btn.secondary{background:#181818;color:var(--text);border:1px solid var(--line)}
+.nav{display:flex;gap:12px;margin-top:22px}.nav .btn{flex:1}
+.live{display:grid;grid-template-columns:1fr auto;gap:4px;border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-top:14px}
+.live strong{font-size:24px;color:var(--gold)} .live small{grid-column:1/3;color:var(--muted)}
+.notice{border:1px solid #6d5a26;background:#17140d;border-radius:12px;padding:12px;color:#e8d89c;margin:12px 0}
+.issue{border:1px solid #67452c;background:#17110d;border-radius:12px;padding:12px;color:#f0d1aa;margin:12px 0}
+.addon{border-bottom:1px solid var(--line);padding:13px 0}
+.addon-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.addon label{display:flex;align-items:center;gap:10px;margin:0}
+.addon input{width:auto}
+.addon strong{color:var(--gold)}
+.addon-desc{font-size:12px;color:var(--muted);margin:6px 0 0 28px;line-height:1.45}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:11px;color:var(--gold2);margin:3px 4px 0 0}
+.summary-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:11px 0}
+.summary-row small{display:block;color:var(--muted)}
+.total{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);margin-top:14px;padding-top:16px}
+.total strong{font-size:36px;color:var(--gold)}
+.save{background:#17140d;color:#e9d58a;padding:12px;border-radius:12px;margin-top:12px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice{background:#0d0d0d;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:11px;text-align:left;cursor:pointer}
+.choice.selected{border-color:var(--gold);background:#17140d}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px}
+.test-badge{display:inline-flex;align-items:center;border:1px solid #6d5a26;background:#17140d;color:#e8d89c;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.btn.mini{padding:8px 10px;font-size:12px;flex:0 0 auto}
+.scope-card{border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0;background:#0d0d0d}
+.scope-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.qty-row{display:grid;grid-template-columns:1fr 92px;gap:10px;align-items:end;border-top:1px solid #221f18;padding:8px 0}
+.qty-row:first-child{border-top:0}
+.room-grid{display:grid;grid-template-columns:1fr 100px;gap:10px;align-items:end;margin:6px 0}
+.summary-actions{display:flex;gap:6px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.edit-btn{background:transparent;color:var(--gold2);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;cursor:pointer}
+.summary-select{width:auto;min-width:72px;padding:7px 8px;font-size:12px}
+.success{border:1px solid #536a44;background:#10160d;border-radius:12px;padding:12px;color:var(--ok);margin:12px 0}
+.qa-log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:pre-wrap;max-height:220px;overflow:auto;background:#090909;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}
+.request-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--gold2);font-weight:900;letter-spacing:.5px}
+.question-block{border-top:1px solid #221f18;padding-top:4px;margin-top:8px}
+.missing{color:var(--danger);font-size:12px;margin-top:8px}
+.inline-editor{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.question-block:first-child{border-top:0}
+.scope-detail{color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}
+.confirmed-card{border:2px solid #678650;background:#10170d;border-radius:18px;padding:20px;margin:12px 0}
+.confirmed-card h2{color:var(--ok);font-size:30px;margin-bottom:12px}
+@media(max-width:650px){.topbar{align-items:flex-start}.qty-row,.room-grid{grid-template-columns:1fr 88px}.summary-row{align-items:flex-start}.summary-actions{max-width:110px}.summary-select{max-width:88px}}
+
+h2,h3{margin-top:0}
+h3{margin-top:18px}
+hr{border:0;border-top:1px solid var(--line)}
+@media(max-width:650px){.app{padding:14px}.categories,.grid,.choice-grid{grid-template-columns:1fr}.tag{font-size:23px}.card{padding:16px}.total strong{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><span class="test-badge">TEST MODE Â· simulated availability & payment</span><button id="startOver" class="btn secondary mini">Start Over</button></div>
+  <header class="hero">
+    <div class="brand">TRAVIEEC</div>
+    <div class="tag">ONE CALL. A LOT GETS DONE.</div>
+    <p class="muted">Build your service call, organize a multi-task visit, and keep every part of your punch list structured and easy to understand.</p>
+  </header>
+
+
+  <div class="progress"><div id="progress"></div></div>
+  <div id="stepLabel" class="step-label">Step 1 of 7 Â· Choose your service</div>
+
+
+  <section id="step1" class="card">
+    <h2>What brings me out?</h2>
+    <p class="muted">Choose the main reason for your service call.</p>
+    <div class="categories" id="categories"></div>
+  </section>
+
+
+  <section id="step2" class="card hidden">
+    <h2 id="detailTitle">Tell me about the job</h2>
+    <p id="detailIntro" class="muted"></p>
+    <div id="detailForm"></div>
+
+
+    <label class="check">
+      <input id="afterHours" type="checkbox">
+      <span><strong>After-Hours Service</strong><small>2Ã— applies to the primary service only. Bundle add-ons remain at normal bundle pricing.</small></span>
+    </label>
+
+
+    <div class="live">
+      <span>Current estimate</span><strong id="livePrice">$0</strong>
+      <small id="liveTime">â€”</small>
+    </div>
+
+
+    <div class="nav">
+      <button class="btn secondary" data-go="1">Back</button>
+      <button class="btn" data-go="3">Continue</button>
+    </div>
+  </section>
+
+
+  <section id="step3" class="card hidden">
+    <h2>While Iâ€™m Thereâ€¦</h2>
+    <p class="muted">Add a few smaller tasks at bundle pricing. Quick Fix pricing applies only to the defined small-task scopes below.</p>
+    <div id="addonList"></div>
+    <div id="customPunchWrap" class="hidden">
+      <label for="customPunch">Something Else on My Punch List</label>
+      <textarea id="customPunch" rows="3" placeholder="Briefly describe the task. No automatic price will be added; Iâ€™ll review it before confirming the service call."></textarea>
+      <div class="notice">This item is <strong>review-only</strong>. It does not qualify automatically for the $35 or $60 Quick Fix price.</div>
+    </div>
+    <div class="live">
+      <span>Running estimate</span><strong id="bundlePrice">$0</strong>
+      <small id="bundleTime">â€”</small>
+    </div>
+    <div class="nav">
+      <button class="btn secondary" data-go="2">Back</button>
+      <button class="btn" data-go="4">Continue</button>
+    </div>
+  </section>
+
+
+  <section id="step4" class="card hidden">
+    <h2>Almost done.</h2>
+    <p class="muted">For V1, location is collected for scheduling and fulfillment only. It does not change the estimate you already built.</p>
+
+
+    <div class="grid">
+      <div><label>Service address</label><input id="address" placeholder="Street address"></div>
+      <div><label>ZIP code</label><input id="zip" inputmode="numeric" maxlength="5" placeholder="ZIP code"></div>
+      <div><label>Property</label><select id="property"><option value="owner">Owner</option><option value="renter">Renter</option></select></div>
+      <div><label>Parking</label><select id="parking"><option>Free / driveway</option><option>Street parking</option><option>Paid parking</option><option>Not sure</option></select></div>
+    </div>
+
+
+    <div id="renterPermission" class="notice hidden">
+      If the selected work includes permanent wall modifications, in-wall cable routing, outlet relocation, or similar invasive work, renter authorization may be required before confirmation.
+    </div>
+
+
+    <h3>Photos</h3>
+    <p id="photoHelp" class="muted">A few clear photos help confirm the estimate.</p>
+    <input type="file" multiple accept="image/*">
+
+
+    <h3>Contact</h3>
+    <div class="grid">
+      <div><label>Name</label><input id="name" placeholder="Your name"></div>
+      <div><label>Phone</label><input id="phone" type="tel" placeholder="Phone number"></div>
+      <div><label>Email</label><input id="email" type="email" placeholder="Email address"></div>
+      <div><label>Preferred day</label><input id="date" type="date"></div>
+    </div>
+
+
+    <div class="nav">
+      <button class="btn secondary" data-go="3">Back</button>
+      <button class="btn" data-go="5">Review Estimate</button>
+    </div>
+  </section>
+
+
+  <section id="step5" class="card hidden">
+    <div style="color:var(--gold);font-size:12px;font-weight:800;letter-spacing:1.4px">YOUR ESTIMATE</div>
+    <h2>Your TravieeC Service Call</h2>
+    <p class="muted">Remove bundle items or change supported quantities right here. Other scope edits remain one tap away.</p>
+    <div id="summary"></div>
+    <div class="total"><span>Estimated total</span><strong id="grandTotal">$0</strong></div>
+    <div id="savings" class="save hidden"></div>
+    <div id="technicianDiscount" class="save hidden"></div>
+    <div id="flags" class="notice hidden"></div>
+    <p class="muted" style="font-size:12px;line-height:1.5">
+      This estimate is based on the details provided and assumes normal service conditions. Photos and project details are reviewed before confirmation. If unforeseen conditions change the scope, additional work and pricing are explained and approved before proceeding.
+    </p>
+    <button id="toSchedule" class="btn" style="width:100%;padding:16px" data-go="6">CONTINUE TO SCHEDULING</button>
+    <button class="btn secondary" style="width:100%;margin-top:10px" data-go="4">Back</button>
+  </section>
+  <section id="step6" class="card hidden">
+    <div style="color:var(--gold);font-size:12px;font-weight:800;letter-spacing:1.4px">SCHEDULING</div>
+    <h2 id="scheduleTitle">Choose a time that works.</h2>
+    <p id="scheduleIntro" class="muted">Availability is checked again immediately before your appointment is created.</p>
+
+
+    <div id="reviewScheduleNotice" class="notice hidden"></div>
+
+
+    <div class="grid">
+      <div><label>Preferred date</label><input id="scheduleDate" type="date"></div>
+      <div><label>Start-time flexibility</label><select id="flexibility">
+        <option value="exact">Exact time preferred</option>
+        <option value="30">Â±30 minutes is okay</option>
+        <option value="60">Â±1 hour is okay</option>
+        <option value="day">Flexible that day â€” text me if an earlier/later opening helps</option>
+      </select></div>
+    </div>
+
+
+    <div id="slotArea">
+      <h3>Available times</h3>
+      <p class="muted">TEST MODE availability is simulated, session-stable, and intentionally imperfect. Production will use live calendar/payment adapters.</p>
+      <div id="slots" class="choice-grid"></div>
+    </div>
+
+
+    <div class="nav">
+      <button class="btn secondary" data-go="5">Back</button>
+      <button id="scheduleContinue" class="btn">Continue</button>
+    </div>
+  </section>
+
+
+  <section id="step7" class="card hidden">
+    <div style="color:var(--gold);font-size:12px;font-weight:800;letter-spacing:1.4px">CONFIRMATION</div>
+    <h2 id="confirmTitle">Confirm your service call.</h2>
+    <div id="confirmState" class="notice"></div>
+    <div id="confirmSummary"></div>
+    <div id="depositBox" class="live"></div>
+    <p id="paymentCopy" class="muted" style="font-size:12px;line-height:1.5"></p>
+    <button id="confirmButton" class="btn" style="width:100%;padding:16px">AUTHORIZE DEPOSIT & BOOK</button>
+    <button class="btn secondary" style="width:100%;margin-top:10px" data-go="6">Back</button>
+    <details style="margin-top:18px"><summary class="muted">TEST MODE QA log</summary><div id="qaLog" class="qa-log">No events yet.</div><button id="exportQa" class="btn secondary mini" style="margin-top:8px">Export QA Log</button></details>
+  </section>
+
+
+</div>
+
+
+<script>
+/* BYSC V1.6 layer map: Core mechanics; TravieeC configuration; simulated adapters; theme/UI. */
+const $ = id => document.getElementById(id);
+const money = n => '$' + Math.round(n).toLocaleString();
+
+
+
+const QA_KEY='travieec_bysc_v161_qa';
+const SESSION_KEY='travieec_bysc_v161_session';
+const REQUEST_KEY='travieec_bysc_v161_requests';
+let qaEvents=[];
+function repeatFactor(index){return index===0?1:index===1?.85:.78}
+function repeatSum(base,qty){let v=0;for(let i=0;i<qty;i++)v+=base*repeatFactor(i);return v}
+function customerTime(mins){if(!mins)return'To be reviewed';if(mins<60)return'Up to 1 hour';const h=mins/60;return Number.isInteger(h)?`${h} hr`:`${h.toFixed(1)} hr`}
+function logQA(type,data={}){qaEvents.push({at:new Date().toISOString(),type,...data});localStorage.setItem(QA_KEY,JSON.stringify(qaEvents));renderQaLog()}
+function renderQaLog(){const el=$('qaLog');if(el)el.textContent=qaEvents.length?qaEvents.map(e=>`${e.at} Â· ${e.type} Â· ${JSON.stringify(Object.fromEntries(Object.entries(e).filter(([k])=>!['at','type'].includes(k))))}`).join('\n'):'No events yet.'}
+function sessionSeed(){let s=sessionStorage.getItem(SESSION_KEY);if(!s){s=String(Date.now())+'-'+Math.random();sessionStorage.setItem(SESSION_KEY,s)}return s}
+function seeded(str){let h=2166136261;for(const c of str){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return()=>{h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function newRequestId(){const d=new Date();return`BYSC-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
+function saveRequestRecord(rec){let rows=[];try{rows=JSON.parse(localStorage.getItem(REQUEST_KEY)||'[]')}catch(e){};rows.push(rec);localStorage.setItem(REQUEST_KEY,JSON.stringify(rows))}
+let requestId='';
+
+const categories = [
+  ['quickfix','Quick Fixes & Small Repairs','Defined minor repairs without another primary service'],
+  ['appliance','Appliances','Install, replace or diagnose'],
+  ['plumbing','Plumbing','Fixtures, repairs and diagnostics'],
+  ['tv','TV Mounting','Mounting, cables and media'],
+  ['mounting','General Mounting','Shelves, artwork, mirrors and wall-mounted items'],
+  ['electrical','Electrical + Smart Home','Fixtures, devices and diagnostics'],
+  ['furniture','Furniture Assembly','One piece or a room full'],
+  ['drywall','Drywall Repair','Patch, finish and paint'],
+  ['painting','Painting','Touch-ups through full interiors'],
+  ['yard','Yard Services','Cleanup, trimming and irrigation'],
+  ['cleaning','House Cleaning','Standard, deep or move-out']
+];
+
+
+const categoryMeta = {
+  appliance:['Appliance Service','Tell me what appliance you have and whether you need installation or diagnosis.'],
+  plumbing:['Plumbing Service','Choose what needs to be installed, replaced or diagnosed.'],
+  tv:['TV Mounting','Tell me about the TV, wall, mounting height and cable setup.'],
+  mounting:['General Mounting','Tell me what is being mounted. Undefined item pricing is safely routed for review.'],
+  electrical:['Electrical + Smart Home','Choose the electrical or smart-home service you need.'],
+  furniture:['Furniture Assembly','Tell me what you are assembling. Matching items are estimated faster after the first.'],
+  drywall:['Drywall Repair','Tell me what the damage looks like and how finished you want the repair.'],
+  painting:['Painting','Tell me what you want painted and how much prep is needed.'],
+  yard:['Yard Services','Tell me what needs attention outside.'],
+  cleaning:['House Cleaning','Tell me about the home and the level of cleaning you need.'],
+  quickfix:['Quick Fixes & Small Repairs','Choose this when the defined minor repairs are the whole visit. You can combine eligible items and quantities.']
+};
+
+
+const addonData = [
+  {id:'faucet',name:'Bathroom faucet replacement',price:85,standalone:130,mins:20},
+  {id:'toilet',name:'Running toilet / internal repair',price:55,standalone:130,mins:15},
+  {id:'outlet',name:'Standard outlet / switch',price:45,standalone:130,mins:15},
+  {id:'light',name:'Standard light fixture',price:100,standalone:150,mins:30},
+  {id:'tv',name:'Mount TV up to 55 in',price:100,standalone:150,mins:30},
+  {
+    id:'quick35',name:'Quick Fix',price:35,standalone:130,mins:10,
+    desc:'One very small, straightforward add-on task, usually about 10â€“15 minutes.',
+    examples:['Toilet seat','Flapper','Small picture/hook','Cabinet adjustment','Outlet/switch cover','Minor furniture adjustment']
+  },
+  {
+    id:'quick60',name:'Standard Quick Fix',price:60,standalone:130,mins:20,
+    desc:'One straightforward minor repair or mounting task, usually about 15â€“25 minutes.',
+    examples:['Fill valve','Showerhead','Curtain rod','Small shelf','Door adjustment','Minor caulking']
+  },
+  {
+    id:'customPunch',name:'Something Else on My Punch List',price:0,standalone:0,mins:0,
+    desc:'Describe another small task for review. No automatic price is added.'
+  }
+];
+
+
+let category = '';
+let primary = {name:'',price:0,displayMins:0,internalMins:0,flags:[],photo:'A few clear photos help confirm the estimate.',invasive:false};
+
+
+function renderCategories(){
+  $('categories').innerHTML = categories.map(c =>
+    `<button class="cat" data-cat="${c[0]}"><strong>${c[1]}</strong><span>${c[2]}</span></button>`
+  ).join('');
+  document.querySelectorAll('.cat').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat').forEach(x=>x.classList.remove('selected'));
+    btn.classList.add('selected');
+    category = btn.dataset.cat;
+    renderDetails();
+    goTo(2);
+  }));
+}
+
+
+function goTo(n){
+  [1,2,3,4,5,6,7].forEach(i => $('step'+i).classList.toggle('hidden', i!==n));
+  $('progress').style.width = ((n/7)*100)+'%';
+  const labels=['Choose your service','Tell me about the job','Build your punch list','Location & details','Review your estimate','Choose your timing','Confirm your service call'];
+  $('stepLabel').textContent = `Step ${n} of 7 Â· ${labels[n-1]}`;
+  if(n===3){ renderAddons(); updateBundle(); }
+  if(n===4){ $('photoHelp').textContent = primary.photo; updateRenterNotice(); }
+  if(n===5){ renderSummary(); }
+  if(n===6){ prepareScheduling(); }
+  if(n===7){ renderConfirmation(); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>goTo(+b.dataset.go)));
+
+
+function renderDetails(){
+  $('detailTitle').textContent = categoryMeta[category][0];
+  $('detailIntro').textContent = categoryMeta[category][1];
+  let h='';
+
+  if(category==='appliance') h = `
+    <select id="aMode" aria-label="What can I help you with?"><option value="" selected disabled>What can I help you with?</option><option value="install">Install / replace</option><option value="diag">Diagnose / repair</option></select>
+    <div id="aInstallWrap">
+      <label>Appliance</label>
+      <select id="aItem">
+        <option value="150,45,Refrigerator installation">Refrigerator</option><option value="175,60,Refrigerator + water hookup">Refrigerator + existing water hookup</option>
+        <option value="150,30,Washer installation">Washer</option><option value="150,30,Electric dryer installation">Electric dryer</option><option value="175,45,Gas dryer installation">Gas dryer</option>
+        <option value="225,60,Washer + electric dryer">Washer + electric dryer</option><option value="250,75,Washer + gas dryer">Washer + gas dryer</option>
+        <option value="225,75,Dishwasher replacement">Dishwasher replacement</option><option value="175,45,Electric range replacement">Electric range</option><option value="200,60,Gas range replacement">Gas range</option>
+        <option value="225,75,OTR microwave replacement">OTR microwave</option><option value="225,75,Range hood replacement">Range hood</option><option value="225,90,In-counter cooktop">In-counter cooktop</option>
+        <option value="175,30,Garbage disposal replacement">Garbage disposal</option>
+      </select>
+      <label>Is this replacing an existing appliance in the same location?</label><select id="aExisting"><option value="yes">Yes</option><option value="no">No, new location</option><option value="unsure">Not sure</option></select>
+      <label>Are the required hookups already present?</label><select id="aHookups"><option value="yes">Yes</option><option value="unsure">Not sure</option><option value="no">No / modifications needed</option></select>
+      <label class="check"><input id="aHaul" type="checkbox"><span>Haul away the old appliance</span></label>
+    </div>
+    <div id="aDiagWrap" class="hidden">
+      <label>Which appliance?</label><select id="aDiagItem"><option>Refrigerator / Freezer</option><option>Washer</option><option>Dryer</option><option>Dishwasher</option><option>Range / Oven</option><option>Microwave</option><option>Garbage Disposal</option></select>
+      <label>Whatâ€™s happening?</label><select id="aSymptom"></select>
+      <div id="aOtherWrap" class="hidden"><label>Describe the issue</label><textarea id="aOther" rows="3" placeholder="Tell me what the appliance is doing."></textarea></div>
+    </div>`;
+
+  if(category==='plumbing') h = `
+    <select id="pMode" aria-label="What can I help you with?"><option value="" selected disabled>What can I help you with?</option><option value="install">Install / replace</option><option value="diag">Diagnose / repair</option></select>
+    <div id="pInstallWrap">
+      <label>What fixture needs attention?</label>
+      <select id="pItem"><option value="145,25,Kitchen faucet replacement">Kitchen faucet</option><option value="130,20,Bathroom faucet replacement">Bathroom faucet</option><option value="195,60,Toilet replacement">Toilet replacement</option><option value="130,15,Toilet internal repair">Toilet internal repair</option><option value="130,5,P-trap replacement">P-trap</option><option value="145,20,Pop-up / drain assembly">Pop-up / drain assembly</option><option value="145,20,Compression shutoff valve">Compression shutoff</option><option value="195,40,Sweat / soldered shutoff valve">Sweat-type shutoff</option><option value="175,20,Shower / tub cartridge">Shower / tub cartridge</option><option value="225,60,Sink replacement">Sink replacement</option><option value="395,150,Vanity replacement">Vanity replacement</option><option value="175,30,Garbage disposal replacement">Garbage disposal</option></select>
+      <label>Quantity</label><select id="pQty">${[1,2,3,4,5,6,7,8].map(n=>`<option>${n}</option>`).join('')}</select>
+      <p class="helper">Repeated matching fixtures use the existing repetition-efficiency coefficients rather than multiplying first-unit labor straight across.</p>
+    </div>
+    <div id="pDiagWrap" class="hidden">
+      <label>What fixture needs attention?</label><select id="pArea"><option>Faucet</option><option>Toilet</option><option>Sink / drain</option><option>Shower / tub</option><option>Shutoff valve</option><option>Garbage disposal</option><option>Leak / supply line</option></select>
+      <label>Whatâ€™s happening?</label><select id="pSymptom"><option>Leaking / dripping</option><option>Low flow / weak performance</option><option>Wonâ€™t drain / flush / operate correctly</option><option>Loose / damaged part</option><option>Intermittent problem</option><option>Something else</option></select>
+      <label>Is water actively leaking now?</label><select id="pActiveLeak"><option>No</option><option>Yes â€” slow / contained</option><option>Yes â€” active / uncontained</option></select>
+      <label>Can water be shut off to this fixture?</label><select id="pShutoff"><option>Yes</option><option>Not sure</option><option>No / cannot locate shutoff</option></select>
+    </div>`;
+
+  if(category==='tv') h = `
+    <label>TV size</label><select id="tvItem"><option value="150,30,TV mounting up to 55 in">Up to 55 in</option><option value="175,40,TV mounting 56â€“75 in">56â€“75 in</option><option value="225,55,TV mounting 76â€“85 in">76â€“85 in</option><option value="275,70,TV mounting 86â€“90 in">86â€“90 in</option><option value="0,0,TV mounting over 90 in">Over 90 in â€” review</option></select>
+    <label>TV quantity</label><select id="tvQty">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select>
+    <label>Wall surface</label><select id="tvWall"><option value="0,0">Drywall / wood studs</option><option value="50,20">Brick / concrete</option><option value="75,30">Tile</option><option value="100,40">Stone</option><option value="0,0">Not sure</option></select>
+    <label>Mounting height</label><select id="tvHeight"><option value="0,0">Standard â€” mounting point at 5 ft or below</option><option value="50,20">High wall â€” mounting point above 5 ft / ladder required</option></select>
+    <label>Mount type</label><select id="tvMount"><option>Fixed</option><option>Tilting</option><option>Full motion / articulating</option><option>Not sure</option></select><p class="helper">Mount type does not change the installation price.</p>
+    <label>Cable management</label><select id="tvCable"><option value="0,0">None</option><option value="25,15">Surface raceway +$25</option><option value="125,45">In-wall low-voltage concealment +$125</option><option value="0,0">Concealed power / outlet relocation â€” review</option></select>
+    <div id="tvHardwareWrap" class="hidden"><label>Do you have the required concealment hardware?</label><select id="tvHardware"><option>I already have everything</option><option>I plan to supply it before the appointment</option><option>I need help supplying the required hardware</option></select><p class="helper">If TravieeC supplies hardware, materials follow the existing materials policy. No new flat materials price is invented here.</p></div>
+    <label class="check"><input id="tvSound" type="checkbox"><span>Mount soundbar +$60</span></label><label class="check"><input id="tvMedia" type="checkbox"><span>Hide / mount streaming device +$50</span></label><label class="check"><input id="tvRecessed" type="checkbox"><span>Recessed media box â€” Pending Onsite Review</span></label>`;
+
+  if(category==='mounting') h = `
+    <select id="mMode" aria-label="What can I help you with?"><option value="" selected disabled>What can I help you with?</option><option value="mount">Mount / install</option><option value="diag">Diagnose / repair existing mounting</option></select>
+    <label>What are you mounting?</label><select id="mItem"><option value="" selected disabled>Select an item</option><option>Shelves / shelving</option><option>Curtain rods / window hardware</option><option>Pictures / artwork</option><option>Mirrors</option><option>Hooks / racks / organizers</option><option>Blinds / shades</option><option>Wall cabinets</option><option>Whiteboards / bulletin boards</option><option>Privacy screens / room dividers</option><option>Other wall-mounted item</option><option>Something else</option></select>
+    <label>Quantity</label><select id="mQty">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`).join('')}<option value="10+">10+ / Larger quantity</option></select>
+    <label>Approximate size / weight</label><select id="mSize"><option value="" selected disabled>Select size / weight</option><option>Small / light</option><option>Medium</option><option>Large / heavy</option><option>Not sure</option></select>
+    <label>Wall surface</label><select id="mWall"><option value="" selected disabled>Select wall surface</option><option>Drywall / wood studs</option><option>Brick / concrete</option><option>Tile</option><option>Stone</option><option>Not sure</option></select>
+    <label>Mounting height</label><select id="mHeight"><option value="" selected disabled>Select mounting height</option><option>Standard â€” mounting point at 5 ft or below</option><option>High wall â€” mounting point above 5 ft / ladder required</option></select>
+    <label>Assembly required?</label><select id="mAssembly"><option value="" selected disabled>Select one</option><option>No</option><option>Yes</option><option>Not sure</option></select>
+    <label>Mounting hardware available?</label><select id="mHardware"><option value="" selected disabled>Select one</option><option>Yes</option><option>No</option><option>Not sure</option></select>
+    <label>Are repeated items alike / similar?</label><select id="mSimilar"><option value="" selected disabled>Select one</option><option>Yes</option><option>No</option><option>Not applicable</option></select>
+    <div id="mOtherWrap" class="hidden"><label>Describe what you need mounted</label><textarea id="mOther" rows="3" placeholder="Describe the item and mounting scope."></textarea></div>`;
+
+  if(category==='electrical') h = `
+    <select id="eMode" aria-label="What can I help you with?"><option value="" selected disabled>What can I help you with?</option><option value="install">Install / replace</option><option value="diag">Diagnose / repair</option></select>
+    <div id="eInstallWrap"><label>Service</label><select id="eItem"><option value="130,15,Outlet / switch replacement">Outlet / switch replacement</option><option value="145,15,GFCI replacement">GFCI replacement</option><option value="145,15,Dimmer replacement">Dimmer replacement</option><option value="150,20,Smart switch / dimmer">Smart switch / dimmer</option><option value="145,15,USB / USB-C outlet">USB / USB-C outlet</option><option value="150,30,Standard light fixture">Standard light fixture</option><option value="150,30,Vanity light">Vanity light</option><option value="150,30,Pendant light">Pendant light</option><option value="195,45,Chandelier">Chandelier</option><option value="225,60,Ceiling fan replacement">Ceiling fan replacement</option><option value="350,120,New ceiling fan location">New ceiling fan location</option><option value="150,30,Smart thermostat">Smart thermostat</option><option value="150,30,Smart doorbell">Smart doorbell</option><option value="175,45,Smart camera / floodlight">Smart camera / floodlight</option><option value="175,15,Breaker replacement">Breaker replacement</option><option value="175,20,240V outlet replacement">240V outlet replacement</option></select>
+      <label>Quantity</label><select id="eQty">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`).join('')}<option value="10+">10+ / Larger quantity</option></select>
+      <label>Existing location?</label><select id="eExisting"><option value="yes">Yes</option><option value="no">No / new location</option><option value="unsure">Not sure</option></select></div>
+    <div id="eDiagWrap" class="hidden"><label>What is having the problem?</label><select id="eDiagArea"><option>Outlet / receptacle</option><option>Switch / dimmer</option><option>Light fixture</option><option>Ceiling fan</option><option>Breaker / circuit</option><option>Smart-home device</option><option>Something else</option></select>
+      <label>What is happening?</label><select id="eDiagSymptom"><option>No power</option><option>Intermittent power</option><option>Trips breaker / GFCI</option><option>Flickering / inconsistent operation</option><option>Device is hot / buzzing / smells unusual</option><option>Something else</option></select>
+      <label>How many locations are affected?</label><select id="eDiagQty">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`).join('')}<option>10+</option></select>
+      <div class="notice">Electrical diagnostic is quoted as up to 60 minutes. Internal scheduling target remains ~30 minutes for typical diagnostics.</div></div>`;
+
+  if(category==='furniture') h = `
+    <label>Furniture type</label><select id="fItem"><option value="18,Chair / accent chair">Chair / accent chair</option><option value="25,Bench">Bench</option><option value="38,Dining table">Dining table</option><option value="30,Bookcase / shelving">Bookcase / shelving</option><option value="50,Bed / bed frame">Bed / bed frame</option><option value="50,Desk">Desk</option><option value="60,Dresser / chest">Dresser / chest</option><option value="60,Cabinet / storage">Cabinet / storage</option><option value="75,Sofa / sectional">Sofa / sectional</option><option value="35,Outdoor furniture">Outdoor furniture</option><option value="15,Large floor lamp">Large floor lamp</option><option value="90,Exercise equipment">Exercise equipment</option></select>
+    <div id="fShelfSizeWrap" class="hidden"><label>How large is the bookcase or shelving unit?</label><select id="fShelfSize"><option value="small">Small â€” narrow / compact, about 24 in wide or less</option><option value="medium">Medium â€” standard unit, about 25â€“48 in wide</option><option value="large">Large â€” over 48 in / multi-section / large cube shelving</option><option value="unsure">Not sure â€” upload a photo, screenshot or product link</option></select><p class="helper">Sizing anchors are the approved BILLY/KALLAX/OXBERG examples. V1.5 classifies size without inventing a new timing multiplier.</p></div>
+    <label>Quantity</label><select id="fQty">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`).join('')}</select>
+    <label>Condition</label><select id="fReady"><option value="boxed">New / flat-packed</option><option value="opened">Opened / partially assembled</option><option value="disassemble">Needs disassembly first</option></select>
+    <div class="check"><input id="fDrawers" type="checkbox"><span>Multiple drawers</span></div><div class="check"><input id="fDoors" type="checkbox"><span>Doors / hinges</span></div><div class="check"><input id="fElectronics" type="checkbox"><span>Motor / electronics</span></div><div class="check"><input id="fAnchor" type="checkbox"><span>Wall anchoring</span></div>`;
+
+  if(category==='drywall') h = `
+    <label>Repair type</label><select id="dType"><option>Hole / cutout</option><option>Crack / seam repair</option><option>Anchor / mounting damage</option><option>Dent / surface damage</option></select>
+    <label>Largest damaged area</label><select id="dItem"><option value="225,45,Drywall repair up to 3 in">Up to 3 in</option><option value="250,60,Drywall repair 4â€“6 in">4â€“6 in</option><option value="275,75,Drywall repair 7â€“12 in">7â€“12 in</option><option value="0,0,Drywall repair over 12 in">Larger than 12 in â€” review</option></select>
+    <label>Finish</label><select id="dFinish"><option value="complete">Complete repair â€” patch, return to sand and touch-up paint</option><option value="patch">Patch only</option></select><label>Surface</label><select id="dSurface"><option value="0,0">Wall</option><option value="50,30">Ceiling</option><option value="75,40">Wall + ceiling</option></select><label>Texture</label><select id="dTexture"><option value="0,0">Smooth</option><option value="40,20">Orange peel / light texture</option><option value="75,35">Heavy / specialty texture</option><option value="0,0">Not sure</option></select><div class="check"><input id="dWater" type="checkbox"><span>Water staining / possible moisture damage</span></div><div class="check"><input id="dSoft" type="checkbox"><span>Soft / crumbling drywall</span></div>`;
+
+  if(category==='painting') h = `
+    <label>Painting scope</label><select id="paintItem"><option value="130,60,Painting touch-ups">Touch-ups</option><option value="175,90,Accent wall painting">One accent wall</option><option value="325,240,Single-room painting">One room</option><option value="575,420,Multi-room painting">Multiple rooms</option><option value="650,480,Full-unit interior painting">Full apartment / home interior</option></select>
+    <label>Wall condition</label><select id="paintCondition"><option value="0,0">Good â€” minimal prep</option><option value="50,30">Minor nail holes / scuffs</option><option value="125,75">Several small repairs</option><option value="200,120">Heavy damage / significant prep</option></select><label>Expected coats</label><select id="paintCoats"><option value="1">1 coat / refresh</option><option value="2" selected>2 coats / standard repaint</option><option value="3">Major color change / likely 3 coats</option></select><div class="check"><input id="paintCeiling" type="checkbox"><span>Ceiling</span></div><div class="check"><input id="paintTrim" type="checkbox"><span>Baseboards / trim</span></div><div class="check"><input id="paintDoors" type="checkbox"><span>Doors / frames</span></div>`;
+
+  if(category==='yard') h = `
+    <label>Yard service</label><select id="yItem"><option value="130,60,Seasonal yard cleanup">Seasonal yard cleanup</option><option value="130,60,Weed removal">Weed removal</option><option value="130,60,Shrub / hedge trimming">Shrub / hedge trimming</option><option value="130,60,Planting / garden work">Planting / small garden work</option><option value="130,60,Irrigation service">Irrigation troubleshooting / repair</option><option value="130,60,Green-waste cleanup">Green-waste cleanup</option><option value="130,60,Lawn mowing">Lawn mowing â€” equipment rental required</option><option value="130,60,Pressure washing">Pressure washing â€” equipment rental required</option></select>
+    <label>How large is the area that needs work?</label><select id="yArea"><option value="0,0">Small â€” patio / small contained outdoor area</option><option value="75,60">Medium â€” typical yard section or modest front/back yard</option><option value="175,150">Large â€” substantial yard / multiple work zones</option><option value="0,0">Not sure â€” estimate from address/photos later</option></select><p class="helper">â€œNot sureâ€ preserves the future map/property-imagery estimate path; this prototype does not fabricate a measurement.</p>
+    <label>Condition</label><select id="yCondition"><option value="0,0">Light maintenance</option><option value="50,45">Typical seasonal buildup</option><option value="150,120">Heavy / overgrown</option></select><div class="check"><input id="yHaul" type="checkbox"><span>Haul away green waste +$75 starting</span></div><div class="check"><input id="yBag" type="checkbox"><span>Bag / organize debris +$35</span></div>`;
+
+  if(category==='cleaning') h = `
+    <label>Cleaning level</label><select id="cType"><option value="1,Standard house cleaning">Standard cleaning</option><option value="1.55,Deep house cleaning">Deep cleaning</option><option value="1.7,Move-in / move-out cleaning">Move-in / move-out</option></select>
+    <label>Cleaning scope</label><select id="cScope"><option value="whole">Whole home</option><option value="rooms">Selected rooms only</option></select>
+    <div id="cWholeWrap"><label>Home size</label><select id="cSize"><option value="105">Under 750 sq ft</option><option value="150">750â€“1,250 sq ft</option><option value="210">1,251â€“1,750 sq ft</option><option value="270">1,751â€“2,500 sq ft</option><option value="315">Over 2,500 sq ft</option></select><label>Bathrooms</label><select id="cBaths">${[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6].map(n=>`<option value="${n}">${n}</option>`).join('')}</select></div>
+    <div id="cRoomsWrap" class="hidden"><p class="helper">Choose only the rooms you want cleaned. Leave the rest at 0.</p><div class="room-grid"><label>Bedrooms</label><select id="cBedrooms">${[0,1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Bathrooms</label><select id="cRoomBaths">${[0,1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Kitchens</label><select id="cKitchens"><option>0</option><option>1</option><option>2</option></select></div><div class="room-grid"><label>Living / common areas</label><select id="cLiving">${[0,1,2,3,4].map(n=>`<option>${n}</option>`).join('')}</select></div><div class="room-grid"><label>Offices / other rooms</label><select id="cOther">${[0,1,2,3,4].map(n=>`<option>${n}</option>`).join('')}</select></div></div>
+    <label>Condition</label><select id="cCondition"><option value="0">Well maintained</option><option value="30">Normal lived-in</option><option value="90">Needs extra attention</option><option value="180">Heavy buildup</option></select>
+    <label>Pets?</label><select id="cHasPets"><option value="no">No</option><option value="yes">Yes</option></select>
+    <div id="cPetQtyWrap" class="hidden"><label>Pet quantity</label><select id="cPetQty">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div><input id="cPets" type="hidden" value="0">
+    <div id="cMoveIncluded" class="notice hidden"><strong>Move Cleaning includes appliance and cabinet interiors.</strong><br>Those are automatically included, not separate extras.</div>
+    <div class="check cInteriorExtra"><input id="cOven" type="checkbox"><span>Inside oven</span></div><div class="check cInteriorExtra"><input id="cFridge" type="checkbox"><span>Inside refrigerator</span></div><div class="check cInteriorExtra"><input id="cCabinets" type="checkbox"><span>Inside cabinets</span></div><div class="check"><input id="cBaseboards" type="checkbox"><span>Detailed baseboards</span></div><div class="check"><input id="cWindows" type="checkbox"><span>Interior windows</span></div><div class="check"><input id="cLaundry" type="checkbox"><span>Laundry / folding</span></div><label>Cleaning team</label><select id="cCleaners"><option value="1">One cleaner</option><option value="2">Two cleaners â€” faster when available</option></select>`;
+
+  if(category==='quickfix') h = `<div class="notice"><strong>Defined repairs only.</strong><br>Choose the exact repairs and quantities on the next step. If your repair is not listed, use the review route instead of Quick Fix pricing.</div>`;
+  $('detailForm').innerHTML = h;
+  document.querySelectorAll('#detailForm input,#detailForm select').forEach(el=>{el.addEventListener('change',calcPrimary);el.addEventListener('input',calcPrimary)});
+  $('afterHours').onchange=calcPrimary;
+
+  if(category==='appliance'){
+    const syncOther=()=>{const other=$('aSymptom').value==='Something else';$('aOtherWrap').classList.toggle('hidden',!other);if(!other)$('aOther').value=''};
+    const sync=()=>{const diag=$('aMode').value==='diag';$('aInstallWrap').classList.toggle('hidden',diag);$('aDiagWrap').classList.toggle('hidden',!diag);if(diag){$('aHaul').checked=false;updateApplianceSymptoms();syncOther()}else{$('aSymptom').innerHTML='';$('aOther').value=''};calcPrimary()};
+    $('aMode').addEventListener('change',sync);$('aDiagItem').addEventListener('change',()=>{updateApplianceSymptoms();syncOther();calcPrimary()});$('aSymptom').addEventListener('change',()=>{syncOther();calcPrimary()});$('aOther').addEventListener('input',calcPrimary);sync();
+  }
+  if(category==='plumbing'){
+    const sync=()=>{const diag=$('pMode').value==='diag';$('pInstallWrap').classList.toggle('hidden',diag);$('pDiagWrap').classList.toggle('hidden',!diag);if(diag)$('pQty').value='1';else{$('pActiveLeak').value='No';$('pShutoff').value='Yes'};calcPrimary()};$('pMode').addEventListener('change',sync);sync();
+  }
+  if(category==='tv'){
+    const sync=()=>{const wall=$('tvCable').selectedOptions[0].textContent.includes('In-wall');$('tvHardwareWrap').classList.toggle('hidden',!wall);if(!wall)$('tvHardware').selectedIndex=0;calcPrimary()};$('tvCable').addEventListener('change',sync);sync();
+  }
+  if(category==='electrical'){
+    const sync=()=>{const diag=$('eMode').value==='diag';$('eInstallWrap').classList.toggle('hidden',diag);$('eDiagWrap').classList.toggle('hidden',!diag);if(diag)$('eExisting').value='yes';else{$('eDiagQty').selectedIndex=0;$('eDiagSymptom').selectedIndex=0};calcPrimary()};$('eMode').addEventListener('change',sync);sync();
+  }
+  if(category==='furniture'){
+    const sync=()=>{$('fShelfSizeWrap').classList.toggle('hidden',!$('fItem').selectedOptions[0].textContent.includes('Bookcase'));calcPrimary()};$('fItem').addEventListener('change',sync);sync();
+  }
+  if(category==='cleaning'){
+    const sync=()=>{const move=$('cType').selectedOptions[0].textContent.includes('Move-');const rooms=$('cScope').value==='rooms',pets=$('cHasPets').value==='yes';$('cWholeWrap').classList.toggle('hidden',rooms);$('cRoomsWrap').classList.toggle('hidden',!rooms);$('cPetQtyWrap').classList.toggle('hidden',!pets);if(!pets)$('cPetQty').value='1';$('cPets').value=pets?Math.min(60,+$('cPetQty').value*15):0;$('cMoveIncluded').classList.toggle('hidden',!move);document.querySelectorAll('.cInteriorExtra').forEach(x=>x.classList.toggle('hidden',move));if(move)['cOven','cFridge','cCabinets'].forEach(id=>$(id).checked=false);if($('cCondition').value==='180'&&$('cType').value.startsWith('1,')){$('cType').value='1.55,Deep house cleaning';logQA('cleaning-heavy-buildup-forced-deep')};calcPrimary()};$('cType').addEventListener('change',sync);$('cScope').addEventListener('change',sync);$('cCondition').addEventListener('change',sync);$('cHasPets').addEventListener('change',sync);$('cPetQty').addEventListener('change',sync);sync();
+  }
+  if(category==='quickfix') calcPrimary();
+  if(!['appliance','plumbing','tv','electrical','furniture','cleaning','quickfix'].includes(category)) calcPrimary();
+  setupSequentialDisclosure();
+}
+
+const applianceSymptoms = {
+  'Refrigerator / Freezer':['Not cooling enough','Leaking water','Ice maker not working','Something else'],
+  'Washer':['Wonâ€™t drain','Wonâ€™t spin','Leaking water','Something else'],
+  'Dryer':['Runs but no heat','Wonâ€™t start','Takes too long to dry','Something else'],
+  'Dishwasher':['Wonâ€™t drain','Not cleaning dishes','Leaking water','Something else'],
+  'Range / Oven':['Burner wonâ€™t heat / light','Oven not heating','Temperature seems wrong','Something else'],
+  'Microwave':['Wonâ€™t heat','Wonâ€™t turn on','Turntable / fan not working','Something else'],
+  'Garbage Disposal':['Humming noise','No sound at all','Something stuck inside','Something else']
+};
+
+
+function updateApplianceDiag(){
+  const diag = $('aMode').value==='diag';
+  $('aDiagWrap').classList.toggle('hidden',!diag);
+  $('aItem').disabled = diag;
+  $('aExisting').disabled = diag;
+  $('aHookups').disabled = diag;
+  $('aHaul').disabled = diag;
+  if(diag) updateApplianceSymptoms();
+}
+function updateApplianceSymptoms(){
+  const key=$('aDiagItem').value;
+  $('aSymptom').innerHTML=(applianceSymptoms[key]||['Something else']).map(x=>`<option>${x}</option>`).join('');
+}
+
+
+function split3(id){
+  const a=$(id).value.split(',');
+  return [+a[0],+a[1],a.slice(2).join(',')];
+}
+function split2(id){ return $(id).value.split(',').map(Number); }
+
+
+function calcPrimary(){
+  let p=130,displayMins=60,internalMins=60,name='Service call',flags=[],invasive=false;
+  let photo='A few clear photos help confirm the estimate.';
+
+  if(category==='appliance'){
+    if($('aMode').value==='diag'){p=130;displayMins=60;internalMins=30;name='Appliance diagnostic â€” '+$('aDiagItem').value;photo='Helpful photos: appliance front, model/serial label, control panel or error code, and surrounding area.'}
+    else{[p,displayMins,name]=split3('aItem');internalMins=displayMins;if($('aExisting').value==='no')flags.push('New-location appliance installation requires project review.');if($('aExisting').value==='unsure')flags.push('Photo verification is required to confirm replacement scope.');if($('aHookups').value==='no')flags.push('Utility or hookup modifications require custom review.');if($('aHookups').value==='unsure')flags.push('Hookups must be verified from photos before confirmation.');if(name.includes('cooktop')||name.includes('New garbage'))flags.push('This installation requires photo review before final confirmation.');if($('aHaul').checked){const hp=name.includes('Refrigerator')?100:name.includes('Washer +')?100:name.includes('Washer')||name.includes('dryer')||name.includes('Dishwasher')?60:name.includes('range')||name.includes('cooktop')?75:50;p+=hp;displayMins+=15;internalMins+=15}photo='Please upload the existing appliance/location, hookups, nearby outlet/plumbing/vent connections, and new appliance model information if available.'}
+  }
+
+  if(category==='plumbing'){
+    if($('pMode').value==='diag'){p=130;displayMins=60;internalMins=30;name='Plumbing diagnostic â€” '+$('pArea').value;if($('pActiveLeak').value.includes('uncontained'))flags.push('Active uncontained leak requires prompt scope/safety review.');if($('pShutoff').value.startsWith('No'))flags.push('Fixture shutoff availability must be confirmed.')}
+    else{let basePrice,baseMins;[basePrice,baseMins,name]=split3('pItem');const q=+$('pQty').value;internalMins=Math.round(repeatSum(baseMins,q));displayMins=internalMins;p=Math.round(repeatSum(basePrice,q));name+=q>1?` Ã— ${q}`:'';if(name.includes('Sink replacement')||name.includes('Vanity'))flags.push('Photo review required before final confirmation.')}
+    photo='Helpful photos: fixture/problem area, plumbing underneath or nearby, and any visible leak or damaged connection.';
+  }
+
+  if(category==='tv'){
+    [p,displayMins,name]=split3('tvItem');internalMins=displayMins;if(p===0)flags.push('TVs over 90 in require custom handling and pricing.');let x=split2('tvWall');p+=x[0];displayMins+=x[1];internalMins+=x[1];if(/Tile|Stone|Not sure/.test($('tvWall').selectedOptions[0].textContent))flags.push('Wall surface requires photo verification.');x=split2('tvHeight');p+=x[0];displayMins+=x[1];internalMins+=x[1];x=split2('tvCable');p+=x[0];displayMins+=x[1];internalMins+=x[1];const cableText=$('tvCable').selectedOptions[0].textContent;if(cableText.includes('review')){flags.push('Concealed power / outlet relocation requires scope review.');invasive=true}if(cableText.includes('In-wall')){invasive=true;if($('tvHardware').value.includes('help supplying'))flags.push('Concealment hardware/materials to be supplied under the existing materials policy.')}if($('tvSound').checked){p+=60;displayMins+=20;internalMins+=20}if($('tvMedia').checked){p+=50;displayMins+=20;internalMins+=20}if($('tvRecessed').checked){flags.push('Recessed media box â€” Pending Onsite Review.');invasive=true}photo='Helpful photos: full wall/location, TV size/model, mount if already purchased, nearby outlets, and fireplace/surface details if applicable.';
+  }
+
+  if(category==='electrical'){
+    if($('eMode').value==='diag'){p=130;displayMins=60;internalMins=30;name='Electrical diagnostic â€” '+$('eDiagArea').value;if(/hot|buzzing|smells/.test($('eDiagSymptom').value))flags.push('Heat/buzzing/odor requires priority review for safe handling.')}
+    else{[p,displayMins,name]=split3('eItem');internalMins=displayMins;if($('eExisting').value==='no'){if(name==='New ceiling fan location')flags.push('New fan installation is a premium custom service.');else flags.push('New-location electrical work requires review. New circuits are not offered.')}if($('eExisting').value==='unsure')flags.push('Photo verification is required to confirm scope.');if(name.includes('Breaker')||name.includes('240V'))flags.push('Breaker / 240V replacement requires photo review before confirmation.');if(name==='New ceiling fan location')flags.push('New fan location may involve mounting, drywall and access work.')}
+    photo='Please upload the existing device or fixture, surrounding wall/ceiling area, nearby switch/outlet, and product/model information if available.';
+  }
+
+  if(category==='furniture'){
+    const [baseStr,itemName]=$('fItem').value.split(','),base=+baseStr,q=+$('fQty').value;internalMins=Math.round(repeatSum(base,q));if($('fReady').value==='opened')internalMins+=15;if($('fReady').value==='disassemble')internalMins+=10*q;if($('fDrawers').checked)internalMins+=15*q;if($('fDoors').checked)internalMins+=10*q;if($('fElectronics').checked)internalMins+=20*q;if($('fAnchor').checked)internalMins+=10*q;displayMins=internalMins;p=Math.max(130,130+Math.max(0,internalMins/60-1)*75);name=itemName+' Ã— '+q;if(itemName.includes('Bookcase'))name+=' Â· '+$('fShelfSize').selectedOptions[0].textContent.split(' â€” ')[0];if(itemName.includes('Exercise')||$('fElectronics').checked)flags.push('Product information is recommended for specialty or powered equipment.');if(itemName.includes('Bookcase')&&$('fShelfSize').value==='unsure')flags.push('Bookcase/shelving size requires photo, screenshot, or product-link confirmation.');photo='A product link, box photo, or instruction-manual photo helps confirm assembly time.';
+  }
+
+  if(category==='drywall'){
+    [p,displayMins,name]=split3('dItem');internalMins=displayMins;if(p===0)flags.push('Damage larger than 12 inches requires photo review and custom pricing.');else{if($('dFinish').value==='patch'){p-=75;displayMins-=20;internalMins-=20}let x=split2('dSurface');p+=x[0];displayMins+=x[1];internalMins+=x[1];x=split2('dTexture');p+=x[0];displayMins+=x[1];internalMins+=x[1];if(/Heavy|Not sure/.test($('dTexture').selectedOptions[0].textContent))flags.push('Texture requires photo verification.');p=Math.max(130,p);displayMins=Math.max(60,displayMins);internalMins=Math.max(60,internalMins)}if($('dWater').checked)flags.push('Water staining or moisture damage requires source verification before finish work.');if($('dSoft').checked)flags.push('Soft or crumbling drywall may indicate damage beyond the visible opening.');photo='Please include one close-up and one wider photo showing the surrounding wall or ceiling.';
+  }
+
+  if(category==='painting'){
+    [p,displayMins,name]=split3('paintItem');internalMins=displayMins;let x=split2('paintCondition');p+=x[0];displayMins+=x[1];internalMins+=x[1];if($('paintCoats').value==='1'&&name!=='Painting touch-ups'){p-=50;displayMins-=60;internalMins-=60}if($('paintCoats').value==='3'){p+=150;displayMins+=120;internalMins+=120}if($('paintCeiling').checked){p+=125;displayMins+=90;internalMins+=90}if($('paintTrim').checked){p+=100;displayMins+=75;internalMins+=75}if($('paintDoors').checked){p+=100;displayMins+=75;internalMins+=75}p=Math.max(130,p);displayMins=Math.max(60,displayMins);internalMins=Math.max(60,internalMins);if($('paintCondition').value==='200,120')flags.push('Heavy wall damage requires photo review.');if(name.includes('Full-unit'))flags.push('Full-unit painting requires photo review to confirm room count, condition and scope.');photo='Please include wide photos of each room/wall and close-ups of damaged areas.';
+  }
+
+  if(category==='yard'){
+    [p,displayMins,name]=split3('yItem');internalMins=displayMins;let x=split2('yArea');p+=x[0];displayMins+=x[1];internalMins+=x[1];x=split2('yCondition');p+=x[0];displayMins+=x[1];internalMins+=x[1];if($('yHaul').checked){p+=75;displayMins+=30;internalMins+=30}if($('yBag').checked){p+=35;displayMins+=20;internalMins+=20}if(name.includes('Lawn mowing')||name.includes('Pressure washing'))flags.push('Equipment-rental cost must be confirmed before booking.');if($('yArea').selectedOptions[0].textContent.startsWith('Not sure'))flags.push('Work-area size needs confirmation from photos/address before final scope.');photo='Wide photos of the work area and close-ups of any irrigation problem help confirm the estimate.';
+  }
+
+  if(category==='cleaning'){
+    const [factorStr,itemName]=$('cType').value.split(','),factor=+factorStr;const partial=$('cScope').value==='rooms';if(partial){internalMins=+$('cBedrooms').value*35 + +$('cRoomBaths').value*50 + +$('cKitchens').value*60 + +$('cLiving').value*40 + +$('cOther').value*35;internalMins=Math.round(internalMins*factor);name=itemName+' â€” selected rooms'}else{internalMins=Math.round(+$('cSize').value*factor);internalMins+=Math.max(0,+$('cBaths').value-1)*30;name=itemName}internalMins+=+$('cCondition').value + +$('cPets').value;const move=itemName.includes('Move-in');if(move)internalMins+=45+45+60;else[['cOven',45],['cFridge',45],['cCabinets',60]].forEach(x=>{if($(x[0]).checked)internalMins+=x[1]});[['cBaseboards',45],['cWindows',60],['cLaundry',45]].forEach(x=>{if($(x[0]).checked)internalMins+=x[1]});displayMins=internalMins;if($('cCleaners').value==='2')displayMins=Math.ceil(internalMins/1.75);p=Math.max(130,130+Math.max(0,internalMins/60-1)*75);if($('cCondition').value==='180')flags.push('Heavy buildup is routed to Deep Clean. Photos are recommended.');if(move)flags.push('Move Cleaning includes appliance and cabinet interiors.');if(partial&&internalMins===0)flags.push('Select at least one room before confirmation.');photo='For larger or deep-cleaning jobs, wide photos of the kitchen, bathrooms and main living areas help confirm the estimate.';
+  }
+
+  primary={name,price:p,displayMins,internalMins,flags,photo,invasive};
+  updatePrimaryDisplay();
+}
+
+function updatePrimaryDisplay(){
+  const shown=$('afterHours').checked?primary.price*2:primary.price;
+  $('livePrice').textContent=primary.price===0?'Review':money(shown);
+  $('liveTime').textContent=customerTime(primary.displayMins);
+}
+
+function renderAddons(){
+  $('addonList').innerHTML=addonData.map(a=>{
+    if(a.examples){return `<div class="scope-card"><div class="scope-title"><div><strong>${a.name}</strong><div class="addon-desc" style="margin-left:0">${a.desc}</div></div><strong>from ${money(a.price)}</strong></div><div class="addon-desc" style="margin:6px 0">Choose the exact qualifying tasks. Repetition efficiency applies across selected units within this class.</div>${a.examples.map((task,i)=>`<div class="qty-row"><label class="check"><input type="checkbox" class="quickTask" data-class="${a.id}" data-task="${task}" data-price="${a.price}" data-mins="${a.mins}" data-standalone="${a.standalone}"><span>${task}</span></label><div><label style="font-size:11px">Qty</label><select class="quickQty">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></div></div>`).join('')}</div>`}
+    return `<div class="addon"><div class="addon-head"><label><input type="checkbox" class="addonCheck" data-id="${a.id}"><span>${a.name}</span></label><strong>${a.price?'+ '+money(a.price):'Review'}</strong></div><div class="addon-desc">${a.desc||''}</div></div>`;
+  }).join('');
+  document.querySelectorAll('.addonCheck,.quickTask,.quickQty').forEach(x=>x.addEventListener('change',()=>{const c=document.querySelector('.addonCheck[data-id="customPunch"]');$('customPunchWrap').classList.toggle('hidden',!(c&&c.checked));updateBundle()}));
+  if(category==='quickfix')document.querySelectorAll('.addonCheck').forEach(x=>x.closest('.addon').classList.toggle('hidden',x.dataset.id!=='customPunch'));
+}
+
+function totals(){
+  let total=$('afterHours').checked?primary.price*2:primary.price;
+  let standalone=$('afterHours').checked?primary.price*2:primary.price;
+  let displayMins=primary.displayMins,internalMins=primary.internalMins,rows=[];
+  document.querySelectorAll('.addonCheck:checked').forEach(box=>{const a=addonData.find(x=>x.id===box.dataset.id);total+=a.price;standalone+=a.standalone;displayMins+=a.mins;internalMins+=a.mins;rows.push({...a,source:'addon'})});
+  const classCounters={};
+  document.querySelectorAll('.quickTask:checked').forEach(box=>{const q=+(box.closest('.qty-row').querySelector('.quickQty').value||1),cls=box.dataset.class,basePrice=+box.dataset.price,baseMins=+box.dataset.mins,baseStandalone=+box.dataset.standalone;classCounters[cls]=classCounters[cls]||0;let itemPrice=0,itemMins=0,itemStandalone=0;for(let i=0;i<q;i++){const idx=classCounters[cls]++;const f=repeatFactor(idx);itemPrice+=basePrice*f;itemMins+=baseMins*f;itemStandalone+=baseStandalone*f}itemPrice=Math.round(itemPrice);itemMins=Math.round(itemMins);itemStandalone=Math.round(itemStandalone);total+=itemPrice;standalone+=itemStandalone;displayMins+=itemMins;internalMins+=itemMins;rows.push({id:cls,name:`${box.dataset.task} Ã— ${q}`,price:itemPrice,standalone:itemStandalone,mins:itemMins,source:'quick',task:box.dataset.task})});
+  return{total:Math.round(total),standalone:Math.round(standalone),displayMins:Math.round(displayMins),internalMins:Math.round(internalMins),rows};
+}
+function updateBundle(){
+  const t=totals();
+  $('bundlePrice').textContent = primary.price===0&&category!=='quickfix'?'Review':money(t.total);
+  $('bundleTime').textContent=customerTime(t.displayMins);
+}
+
+
+function updateRenterNotice(){
+  $('renterPermission').classList.toggle('hidden', !($('property').value==='renter' && primary.invasive));
+}
+$('property').addEventListener('change',updateRenterNotice);
+
+
+function setPrimaryQty(value){if(category==='plumbing'&&$('pQty'))$('pQty').value=value;if(category==='furniture'&&$('fQty'))$('fQty').value=value;calcPrimary();renderSummary()}
+function removeScopeRow(index){const t=totals(),row=t.rows[index];if(!row)return;if(row.source==='addon'){const box=document.querySelector(`.addonCheck[data-id="${row.id}"]`);if(box)box.checked=false;if(row.id==='customPunch')$('customPunchWrap').classList.add('hidden')}else if(row.source==='quick'){const box=[...document.querySelectorAll('.quickTask')].find(x=>x.checked&&x.dataset.task===row.task);if(box)box.checked=false}updateBundle();renderSummary()}
+function renderSummary(){
+  const t=totals();
+  let primaryActions='<button class="edit-btn" onclick="goTo(2)">Edit scope</button>';
+  if(category==='plumbing'&&$('pMode').value==='install')primaryActions=`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6,7,8].map(n=>`<option ${+$('pQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`;
+  if(category==='furniture')primaryActions=`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${+$('fQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`;
+  let html=`<div class="summary-row"><div><strong>${primary.name}</strong><small>${$('afterHours').checked?'After-hours primary service Â· 2Ã—':'Primary service'}</small></div><div class="summary-actions"><strong>${primary.price===0?'Review':money($('afterHours').checked?primary.price*2:primary.price)}</strong>${primaryActions}</div></div>`;
+  t.rows.forEach((a,i)=>{const detail=a.id==='customPunch'?('Review-only punch-list item'+($('customPunch').value?' Â· '+$('customPunch').value:'')):`Bundle scope Â· standalone ${money(a.standalone)}`;html+=`<div class="summary-row"><div><strong>${a.name}</strong><small>${detail}</small></div><div class="summary-actions"><strong>${a.price?money(a.price):'Review'}</strong><button class="edit-btn" onclick="removeScopeRow(${i})">Remove</button></div></div>`});
+  html+=`<div class="summary-row"><div><strong>Estimated service time</strong><small>Customer-facing estimate</small></div><strong>${customerTime(t.displayMins)}</strong></div>`;
+  $('summary').innerHTML=html;$('grandTotal').textContent=primary.price===0?'Photo review':money(t.total);
+  const save=Math.max(0,t.standalone-t.total);$('savings').classList.toggle('hidden',!save);if(save)$('savings').textContent=`You save ${money(save)} by bundling these services into one visit.`;
+  let flags=[...primary.flags];if($('property').value==='renter'&&primary.invasive)flags.push('Renter authorization may be required for the requested permanent wall/property modifications.');const custom=document.querySelector('.addonCheck[data-id="customPunch"]');if(custom&&custom.checked)flags.push('â€œSomething Else on My Punch Listâ€ requires review and has not been automatically priced.');if(['appliance','plumbing','tv','electrical'].includes(category)){if(t.internalMins>240)flags.push('This has become a larger project and requires custom project review.');else if(t.internalMins>=180)flags.push('Larger bundle: photo verification is required before confirmation.')}$('flags').classList.toggle('hidden',!flags.length);if(flags.length)$('flags').innerHTML='<strong>Quick verification before confirmation</strong><br>'+[...new Set(flags)].join('<br>');
+}
+
+let selectedSlot = '';
+let bookingState = 'Draft';
+
+
+function primaryReviewRequired(){
+  const text=(primary.flags||[]).join(' ').toLowerCase();
+  const explicitReview=primary.price===0||/requires (project |custom )?review|requires custom review|new-location .*requires review|custom handling and pricing|premium custom service/.test(text.replaceAll('pending onsite review',''));
+  const renterBlock = $('property').value==='renter' && primary.invasive;
+  return explicitReview || renterBlock;
+}
+function hasPendingOnsiteReview(){
+  const custom=document.querySelector('.addonCheck[data-id="customPunch"]');
+  return !!((custom&&custom.checked)||(category==='tv'&&$('tvRecessed')&&$('tvRecessed').checked));
+}
+function reviewState(){
+  if(primaryReviewRequired()) return 'primary-review';
+  if(hasPendingOnsiteReview()) return 'auto-plus-review';
+  return 'auto';
+}
+function depositInfo(){
+  const t=totals();
+  const rate=t.internalMins<330 ? .25 : .50;
+  return {rate,amount:t.total*rate,total:t.total,remaining:t.total-(t.total*rate),mins:t.internalMins};
+}
+function isoDateLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function minDateForState(){
+  const d=new Date();
+  const state=reviewState();
+  if(state==='primary-review') d.setTime(d.getTime()+24*60*60*1000);
+  else d.setTime(d.getTime()+2*60*60*1000);
+  return isoDateLocal(d);
+}
+function prepareScheduling(){
+  bookingState = reviewState()==='primary-review' ? 'Needs Primary Review' : 'Ready for Slot';
+  const sourceDate=$('date').value || minDateForState();
+  $('scheduleDate').min=minDateForState();
+  $('scheduleDate').value = sourceDate < $('scheduleDate').min ? $('scheduleDate').min : sourceDate;
+  selectedSlot='';
+  const state=reviewState();
+  $('reviewScheduleNotice').classList.toggle('hidden',state==='auto');
+  if(state==='primary-review'){
+    $('scheduleTitle').textContent='Tell me what timing works for you.';
+    $('scheduleIntro').textContent='This service needs review before an appointment can be promised. Your preferred availability helps me confirm it faster.';
+    $('reviewScheduleNotice').innerHTML='<strong>Review required before confirmation.</strong><br>Your preferred date and flexibility will be sent with the request. No deposit is taken until the scope is approved and a time is confirmed.';
+    $('slotArea').classList.add('hidden');
+    $('scheduleContinue').textContent='SUBMIT FOR REVIEW';
+  } else {
+    $('scheduleTitle').textContent='Choose a time that works.';
+    $('scheduleIntro').textContent='Your slot is checked again immediately before the appointment is created.';
+    $('slotArea').classList.remove('hidden');
+    if(state==='auto-plus-review') $('reviewScheduleNotice').innerHTML='<strong>Your main service can be booked now.</strong><br>The review-only punch-list item stays Pending Onsite Review and is not included in todayâ€™s confirmed price, deposit, or reserved time.';
+    $('scheduleContinue').textContent='CONTINUE';
+    renderSlots();
+  }
+}
+function renderSlots(){
+  const t=totals(),date=$('scheduleDate').value||'none',rand=seeded(sessionSeed()+date+category+t.internalMins+($('afterHours').checked?'ah':'normal'));
+  const d=$('scheduleDate').value?new Date($('scheduleDate').value+'T12:00:00'):new Date(),day=d.getDay(),slots=[];
+  if(day!==0){const first=$('afterHours').checked?20*60:8*60,last=$('afterHours').checked?22*60:19*60+30;for(let m=first;m<=last;m+=30){if(!$('afterHours').checked&&m+t.internalMins>20*60)continue;const r=rand();if(r<.30)continue;slots.push({time:`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`,tight:r<.44})}}
+  $('slots').innerHTML=slots.length?slots.map(x=>`<button type="button" class="cat slotChoice" data-slot="${x.time}" data-tight="${x.tight}"><strong>${new Date('2000-01-01T'+x.time).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</strong><span>${x.tight?'Limited opening':'Simulated available'}</span></button>`).join(''):'<div class="notice">No eligible TEST MODE slots on this date. Choose another day.</div>';
+  document.querySelectorAll('.slotChoice').forEach(b=>b.onclick=()=>{document.querySelectorAll('.slotChoice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selectedSlot=b.dataset.slot;logQA('slot-selected',{date,slot:selectedSlot,tight:b.dataset.tight})});
+  logQA('availability-generated',{date,shown:slots.length});
+}
+$('scheduleDate').addEventListener('change',()=>{if(reviewState()!=='primary-review'){selectedSlot='';renderSlots()}});
+$('scheduleContinue').addEventListener('click',()=>{
+  if(reviewState()!=='primary-review'&&!selectedSlot){alert('Choose an available time to continue.');return;}
+  goTo(7);
+});
+
+
+function renderConfirmation(){
+  const state=reviewState(), t=totals(), dep=depositInfo();
+  const dateText=$('scheduleDate').value ? new Date($('scheduleDate').value+'T12:00:00').toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'}) : 'Preferred date';
+  const timeText=selectedSlot ? new Date('2000-01-01T'+selectedSlot).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : 'Preferred availability';
+  let html=`<div class="summary-row"><div><strong>${primary.name}</strong><small>${state==='primary-review'?'Scope review required':'Confirmed primary scope'}</small></div><strong>${primary.price===0?'Review':money($('afterHours').checked?primary.price*2:primary.price)}</strong></div>`;
+  t.rows.forEach(a=>html+=`<div class="summary-row"><div><strong>${a.name}</strong><small>${a.id==='customPunch'?('Pending Onsite Review'+($('customPunch').value?' Â· '+$('customPunch').value:'')):'Confirmed add-on'}</small></div><strong>${a.price?money(a.price):'Review'}</strong></div>`);
+  html+=`<div class="summary-row"><div><strong>Timing</strong><small>${$('flexibility').selectedOptions[0].textContent}</small></div><strong>${dateText}<br>${timeText}</strong></div>`;
+  $('confirmSummary').innerHTML=html;
+  if(state==='primary-review'){
+    bookingState='Needs Primary Review';
+    $('confirmTitle').textContent='Send your request for review.';
+    $('confirmState').innerHTML='<strong>No appointment or payment yet.</strong><br>Iâ€™ll review the scope and your preferred timing before anything is confirmed.';
+    $('depositBox').innerHTML='<span>Due today</span><strong>$0</strong><small>No deposit until approved.</small>';
+    $('paymentCopy').textContent='Submitting this request does not charge a card or promise an appointment.';
+    $('confirmButton').textContent='SEND REVIEW REQUEST';
+  } else {
+    bookingState='Ready for Slot';
+    $('confirmTitle').textContent='Confirm your service call.';
+    $('confirmState').innerHTML=state==='auto-plus-review'?'<strong>Main service ready to book.</strong><br>Your review-only item remains Pending Onsite Review and is excluded from this deposit.':'<strong>Ready to book.</strong><br>Your selected time receives one final availability check before confirmation.';
+    $('depositBox').innerHTML=`<span>Deposit due today</span><strong>${money(dep.amount)}</strong><small>${Math.round(dep.rate*100)}% of confirmed ${money(dep.total)} scope Â· estimated remaining balance ${money(dep.remaining)}</small>`;
+    $('paymentCopy').textContent='TEST MODE mirrors production order: authorize the deposit, recheck live availability, create the appointment, then capture the deposit. You are not charged if the appointment cannot be established.';
+    $('confirmButton').textContent='AUTHORIZE DEPOSIT & BOOK';
+  }
+}
+$('confirmButton').addEventListener('click',()=>{
+  const state=reviewState(),btn=$('confirmButton');
+  if(state==='primary-review'){
+    requestId=requestId||newRequestId();bookingState='Needs Primary Review';saveRequestRecord({requestId,state:bookingState,category,primary:primary.name,scopeText:$('customPunch').value||'',createdAt:new Date().toISOString()});$('confirmState').innerHTML=`<strong>Request received.</strong><br>Request ID: <span class="request-id">${requestId}</span><br>TEST MODE only â€” no live message was sent.`;btn.disabled=true;btn.textContent='REVIEW REQUEST RECORDED';logQA('review-request-recorded',{requestId});return;
+  }
+  btn.disabled=true;btn.textContent='AUTHORIZING TEST DEPOSITâ€¦';bookingState='Authorizing';const dep=depositInfo();logQA('deposit-authorize-start',{slot:selectedSlot,amount:dep.amount});
+  setTimeout(()=>{
+    const rand=seeded(sessionSeed()+$('scheduleDate').value+selectedSlot+'final');
+    if(rand()<.08){bookingState='Authorization Failed';$('confirmState').innerHTML='<strong>TEST MODE: authorization failed.</strong><br>No appointment was created and nothing was captured.';btn.disabled=false;btn.textContent='RETRY AUTHORIZE & BOOK';logQA('authorization-failed');return}
+    bookingState='Final Availability Check';btn.textContent='RECHECKING SLOTâ€¦';logQA('authorization-approved');
+    setTimeout(()=>{
+      if(rand()<.22){bookingState='Slot Lost Before Capture';$('confirmState').innerHTML='<strong>That time was just taken.</strong><br>Your TEST MODE authorization was not captured. Choose another available time.';btn.disabled=false;btn.textContent='CHOOSE ANOTHER TIME';selectedSlot='';logQA('slot-lost-before-capture',{slot:selectedSlot});goTo(6);return}
+      bookingState='Confirmed';requestId=requestId||newRequestId();const rec={requestId,state:bookingState,category,primary:primary.name,scope:totals().rows.map(x=>({name:x.name,price:x.price})),scopeDetails:collectScopeDetails(),scopeText:$('customPunch').value||'',date:$('scheduleDate').value,slot:selectedSlot,address:$('address').value,total:dep.total,deposit:dep.amount,remaining:dep.remaining,quickFixOutcome:'Not yet recorded',createdAt:new Date().toISOString()};saveRequestRecord(rec);renderConfirmedCard(rec);btn.classList.add('hidden');logQA('appointment-created',{requestId,slot:selectedSlot});logQA('deposit-captured-simulated',{requestId,amount:dep.amount});renderQaLog();
+    },500);
+  },500);
+});
+
+$('startOver').addEventListener('click',()=>{if(!confirm('Start over? This clears the current unsaved estimate, scope, schedule and TEST MODE session. Submitted Request IDs remain in local history.'))return;logQA('start-over');sessionStorage.removeItem(SESSION_KEY);location.reload()});
+$('exportQa').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(qaEvents,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travieec-bysc-v1.6-qa-events.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+window.addEventListener('load',()=>{try{qaEvents=JSON.parse(localStorage.getItem(QA_KEY)||'[]')}catch(e){qaEvents=[]}logQA('v1.6-loaded',{session:sessionSeed()})});
+
+
+
+renderCategories();
+</script>
+<script>
+/* V1.6 Core extensions. TravieeC values remain in the configuration above. */
+let technicianDiscount=0;
+const v15CalcPrimary=calcPrimary;
+calcPrimary=function(){
+  if(category==='quickfix'){
+    primary={name:'Quick Fixes & Small Repairs',price:0,displayMins:0,internalMins:0,flags:[],photo:'Photos of each repair help confirm that it fits the defined Quick Fix scope.',invasive:false};
+    updatePrimaryDisplay();return;
+  }
+  v15CalcPrimary();
+  const root=$('detailForm'),branchHidden=el=>{let p=el.parentElement;while(p&&p!==root){if(p.classList.contains('hidden'))return true;p=p.parentElement}return false};
+  const pending=[...root.querySelectorAll('select,textarea')].some(el=>!branchHidden(el)&&el.dataset.sequence!==undefined&&el.dataset.answered!=='true');
+  if(pending){primary={...primary,price:0,displayMins:0,internalMins:0,flags:['Complete the visible questions to calculate the estimate.']};updatePrimaryDisplay();return}
+  if(category==='appliance'&&$('aMode').value==='diag'){
+    const issue=$('aSymptom').value==='Something else'&&$('aOther').value.trim()?$('aOther').value.trim():$('aSymptom').value;
+    primary.name=`Appliance diagnostic â€” ${$('aDiagItem').value} Â· ${issue}`;
+  }
+  if(category==='tv'){
+    const q=+$('tvQty').value,[basePrice,baseMins,baseName]=split3('tvItem');
+    primary.price+=Math.round(repeatSum(basePrice,q))-basePrice;primary.internalMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.displayMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.name=baseName+(q>1?` Ã— ${q}`:'');
+  }
+  if(category==='electrical'&&$('eMode').value==='install'){
+    const q=+$('eQty').value,[basePrice,baseMins,baseName]=split3('eItem');
+    primary.price+=Math.round(repeatSum(basePrice,q))-basePrice;primary.internalMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.displayMins+=Math.round(repeatSum(baseMins,q))-baseMins;primary.name=baseName+(q>1?` Ã— ${q}`:'');
+  }
+  if(category==='furniture'&&$('fItem').selectedOptions[0].textContent.includes('Bookcase')){
+    const q=+$('fQty').value,oldBase=30,newBase=({small:24,medium:40,large:65,unsure:40}[$('fShelfSize').value]);
+    const delta=Math.round(repeatSum(newBase,q)-repeatSum(oldBase,q));primary.internalMins+=delta;primary.displayMins+=delta;primary.price=Math.max(130,130+Math.max(0,primary.internalMins/60-1)*75);
+  }
+  updatePrimaryDisplay();
+};
+
+const v15Totals=totals;
+totals=function(){
+  const t=v15Totals();
+  if(category==='quickfix'){
+    let total=0,mins=0,standalone=0;const counters={};
+    t.rows.filter(r=>r.source==='quick').forEach(r=>{const cls=r.id,q=+(r.name.match(/(\d+)$/)||[,1])[1],base=addonData.find(a=>a.id===cls);counters[cls]=counters[cls]||0;let price=0,time=0;for(let i=0;i<q;i++){const f=repeatFactor(counters[cls]++);price+=base.standalone*f;time+=base.mins*f}r.price=Math.round(price);r.standalone=r.price;r.mins=Math.round(time);total+=r.price;mins+=r.mins;standalone+=r.standalone});
+    t.total=total;t.standalone=standalone;t.displayMins=mins;t.internalMins=mins;
+  }
+  t.technicianDiscount=technicianDiscount;t.total=Math.max(0,t.total-technicianDiscount);return t;
+};
+
+function controlLabel(el){const wrap=el.closest('.question-block')||el.parentElement;const lab=wrap&&wrap.querySelector('label');return lab?lab.textContent.trim().replace(/\s+/g,' '):el.id}
+function collectScopeDetails(){
+  if(!$('detailForm'))return[];const out=[];
+  $('detailForm').querySelectorAll('select,textarea,input:not([type="hidden"])').forEach(el=>{if(el.disabled||el.closest('.hidden'))return;let value='';if(el.type==='checkbox'){if(!el.checked)return;value=el.parentElement.textContent.trim()}else value=el.selectedOptions?el.selectedOptions[0]?.textContent.trim():el.value.trim();if(value)out.push({key:el.id,label:controlLabel(el),value})});return out;
+}
+function scopeDetailsHtml(){const d=collectScopeDetails();return d.length?`<div class="scope-detail">${d.map(x=>`<strong>${x.label}:</strong> ${x.value}`).join('<br>')}</div>`:''}
+
+function setupSequentialDisclosure(){
+  const root=$('detailForm');if(!root||category==='quickfix')return;
+  const controls=[...root.querySelectorAll('select,textarea')].filter(x=>x.type!=='hidden');
+  controls.forEach((el,i)=>{el.dataset.sequence=String(i);el.dataset.answered='false'});
+  const branchHidden=el=>{let p=el.parentElement;while(p&&p!==root){if(p.classList.contains('hidden'))return true;p=p.parentElement}return false};
+  const refresh=()=>{let nextOpen=true;controls.forEach(el=>{const relevant=!branchHidden(el);const label=el.previousElementSibling&&el.previousElementSibling.tagName==='LABEL'?el.previousElementSibling:null;const show=relevant&&nextOpen;el.classList.toggle('hidden',!show);if(label)label.classList.toggle('hidden',!show);if(show&&el.dataset.answered!=='true')nextOpen=false})};
+  controls.forEach((el,i)=>el.addEventListener('change',()=>{el.dataset.answered='true';for(let j=i+1;j<controls.length;j++){const d=controls[j];if(d.tagName==='SELECT')d.selectedIndex=0;else d.value='';d.dataset.answered='false'}refresh();calcPrimary()}));refresh();calcPrimary();
+}
+
+const v15SetPrimaryQty=setPrimaryQty;
+setPrimaryQty=function(value){if(category==='tv')$('tvQty').value=value;else if(category==='electrical')$('eQty').value=value;else v15SetPrimaryQty(value);calcPrimary();renderSummary()};
+const v15RenderSummary=renderSummary;
+renderSummary=function(){
+  v15RenderSummary();const t=totals();
+  const first=$('summary').querySelector('.summary-row');if(first){first.querySelector('div').insertAdjacentHTML('beforeend',scopeDetailsHtml());let actions=first.querySelector('.summary-actions');if(category==='tv')actions.insertAdjacentHTML('beforeend',`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6].map(n=>`<option ${+$('tvQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`);if(category==='electrical'&&$('eMode').value==='install')actions.insertAdjacentHTML('beforeend',`<select class="summary-select" onchange="setPrimaryQty(this.value)">${[1,2,3,4,5,6,7,8].map(n=>`<option ${+$('eQty').value===n?'selected':''}>${n}</option>`).join('')}</select>`)}
+  $('grandTotal').textContent=money(t.total);const efficiency=Math.max(0,t.standalone-(t.total+technicianDiscount));$('savings').classList.toggle('hidden',!efficiency);if(efficiency)$('savings').innerHTML='<strong>Bundle Efficiency applied</strong><br>Completing these services together reduces repeated visit costs compared with booking them as separate service calls.';
+  $('technicianDiscount').classList.toggle('hidden',!technicianDiscount);if(technicianDiscount)$('technicianDiscount').innerHTML=`<strong>Technician Discount</strong><br>-${money(technicianDiscount)}`;
+};
+
+const v15PrimaryReviewRequired=primaryReviewRequired;
+primaryReviewRequired=function(){if(category==='quickfix')return totals().rows.filter(x=>x.source==='quick').length===0;return v15PrimaryReviewRequired()};
+const v15RenderConfirmation=renderConfirmation;
+renderConfirmation=function(){v15RenderConfirmation();$('confirmSummary').insertAdjacentHTML('afterbegin',scopeDetailsHtml());$('confirmButton').classList.remove('hidden');$('confirmButton').disabled=false;$('confirmButton').onclick=null};
+function renderConfirmedCard(rec){
+  $('confirmTitle').textContent='Booking confirmed';$('confirmState').className='confirmed-card';$('confirmState').innerHTML=`<h2>âœ“ CONFIRMED!</h2><div class="copy-id"><strong>Request ID</strong> <span class="request-id">${rec.requestId}</span></div><hr><strong>${rec.date}</strong> at <strong>${new Date('2000-01-01T'+rec.slot).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</strong><br>${rec.address||'Service address on request'}<div class="scope-detail" style="margin-top:12px">${rec.scopeDetails.map(x=>`<strong>${x.label}:</strong> ${x.value}`).join('<br>')}</div><hr><strong>Deposit status:</strong> TEST MODE captured ${money(rec.deposit)}<br><strong>Estimated remaining balance:</strong> ${money(rec.remaining)}<p>No real card was charged and no live appointment was created. Keep the Request ID for reference.</p>`;
+  $('confirmSummary').classList.add('hidden');$('depositBox').classList.add('hidden');$('paymentCopy').classList.add('hidden');
+}
+$('scheduleDate').addEventListener('change',()=>{bookingState='Ready for Slot';const b=$('confirmButton');b.disabled=false;b.onclick=null;b.textContent='AUTHORIZE DEPOSIT & BOOK'});
+$('qaLog').closest('details').addEventListener('toggle',()=>{if(bookingState==='Ready for Slot'){const b=$('confirmButton');b.disabled=false;b.onclick=null}});
+window.__V16__={repeatSum,collectScopeDetails,getState:()=>({category,primary,bookingState,selectedSlot}),setTechnicianDiscount:n=>{technicianDiscount=Math.max(0,+n||0)}};
+</script>
+<script>
+/* V1.6.1 stabilization. Reusable state/disclosure mechanics stay in Core; catalog values stay in configuration. */
+const V161='1.6.1';
+let scopeState={addons:{},quick:{},customPunch:''},reviewEditing=false,missingQuestion='';
+function meaningfulPrimary(){return !['appliance','plumbing','electrical','mounting'].includes(category)||!!($(({appliance:'aMode',plumbing:'pMode',electrical:'eMode',mounting:'mMode'})[category])?.value)}
+function visibleRequiredControls(root=$('detailForm')){return [...root.querySelectorAll('[data-required="true"]')].filter(el=>!el.closest('.hidden')&&!el.classList.contains('hidden'))}
+function firstMissing(){return visibleRequiredControls().find(el=>el.dataset.answered!=='true'||!String(el.value||'').trim())}
+function showMissing(el){document.querySelectorAll('.missing').forEach(x=>x.remove());if(!el)return;const msg=document.createElement('div');msg.className='missing';msg.textContent='Please answer this question to continue.';el.insertAdjacentElement('afterend',msg);el.focus();missingQuestion=el.id;logQA('required-question-blocked',{question:el.id})}
+function captureScopeState(){document.querySelectorAll('.addonCheck').forEach(x=>scopeState.addons[x.dataset.id]=x.checked);document.querySelectorAll('.quickTask').forEach(x=>{const row=x.closest('.qty-row');scopeState.quick[x.dataset.task]={checked:x.checked,qty:row.querySelector('.quickQty').value}});if($('customPunch'))scopeState.customPunch=$('customPunch').value}
+function restoreScopeState(){document.querySelectorAll('.addonCheck').forEach(x=>x.checked=!!scopeState.addons[x.dataset.id]);document.querySelectorAll('.quickTask').forEach(x=>{const s=scopeState.quick[x.dataset.task];if(s){x.checked=s.checked;x.closest('.qty-row').querySelector('.quickQty').value=s.qty}});if($('customPunch'))$('customPunch').value=scopeState.customPunch;$('customPunchWrap').classList.toggle('hidden',!scopeState.addons.customPunch)}
+
+const v16RenderDetails=renderDetails;
+renderDetails=function(){v16RenderDetails();document.querySelectorAll('#detailForm select,#detailForm textarea').forEach(el=>el.dataset.required='true');document.querySelectorAll('#detailForm input[type="checkbox"]').forEach(el=>el.dataset.required='false');if(category==='mounting'){$('mOther').dataset.required='false';const sync=()=>{const other=['Something else','Other wall-mounted item'].includes($('mItem').value);$('mOtherWrap').classList.toggle('hidden',!other);$('mOther').dataset.required=String(other);if(!other)$('mOther').value='';calcPrimary()};$('mItem').addEventListener('change',sync);$('mOther').addEventListener('input',calcPrimary);sync()}setupSequentialDisclosure()};
+
+setupSequentialDisclosure=function(){
+  const root=$('detailForm');if(!root||category==='quickfix')return;
+  const controls=[...root.querySelectorAll('select,textarea')];
+  controls.forEach((c,i)=>{c.dataset.sequence=i;c.dataset.required=c.dataset.required||'true';c.dataset.answered='false'});
+  const labelFor=c=>{const p=c.previousElementSibling;return p?.tagName==='LABEL'?p:null};
+  const branchHidden=c=>{let p=c.parentElement;while(p&&p!==root){if(p.id?.endsWith('Wrap')&&p.classList.contains('hidden'))return true;p=p.parentElement}return false};
+  const refresh=()=>{let open=true;controls.forEach(c=>{const relevant=!branchHidden(c);const show=relevant&&open;c.classList.toggle('hidden',!show);labelFor(c)?.classList.toggle('hidden',!show);if(show&&c.dataset.required==='true'&&c.dataset.answered!=='true')open=false})};
+  controls.forEach((c,i)=>c.addEventListener(c.tagName==='TEXTAREA'?'input':'change',()=>{c.dataset.answered=String(!!String(c.value||'').trim());for(let j=i+1;j<controls.length;j++){const d=controls[j];d.dataset.answered='false';if(d.tagName==='SELECT'&&d.options[0]?.disabled)d.value='';else if(d.tagName==='TEXTAREA')d.value=''}refresh();calcPrimary()}));refresh();
+};
+
+const v16CalcPrimary161=calcPrimary;
+calcPrimary=function(){
+  if(!meaningfulPrimary()){primary={name:categoryMeta[category]?.[0]||'Service',price:0,displayMins:0,internalMins:0,flags:[],photo:'A few clear photos help confirm the estimate.',invasive:false,incomplete:true};updatePrimaryDisplay();return}
+  if(category==='mounting'){const item=$('mItem').value||'General Mounting';const detail=$('mOther').value.trim();primary={name:item==='Something else'?'Something else':item,price:0,displayMins:0,internalMins:0,flags:['General Mounting item pricing/time requires scope review; no flat rate has been invented.'],photo:'Please include the item, full wall area, mounting hardware and nearby obstacles.',invasive:true,incomplete:!!firstMissing(),scopeText:detail};updatePrimaryDisplay();return}
+  if(category==='electrical'&&$('eMode').value==='install'&&$('eQty').value==='10+'){const q=$('eQty').value;$('eQty').value='10';v16CalcPrimary161();$('eQty').value=q;primary.name=primary.name.replace(/Ã— 10|Ã— 10/,'10+ / Larger quantity');primary.flags.push('10+ / Larger quantity requires scope confirmation.');return updatePrimaryDisplay()}
+  const controls=[...$('detailForm').querySelectorAll('[data-sequence]')],answerState=controls.map(c=>c.dataset.answered);controls.forEach(c=>c.dataset.answered='true');v16CalcPrimary161();controls.forEach((c,i)=>c.dataset.answered=answerState[i]);primary.incomplete=!!firstMissing();
+  if(category==='electrical'&&$('eMode').value==='diag')primary.flags.push(`Affected locations: ${$('eDiagQty').value} (diagnostic scope/capacity information; no automatic pricing multiplier).`);
+  if(category==='appliance'&&$('aMode').value==='diag')primary.name='Appliance Diagnostic';
+  if(category==='plumbing'&&$('pMode').value==='diag')primary.name='Plumbing Diagnostic';
+  if(category==='electrical'&&$('eMode').value==='diag')primary.name='Electrical Diagnostic';
+};
+
+updatePrimaryDisplay=function(){if(!meaningfulPrimary()){$('livePrice').textContent='â€”';$('liveTime').textContent='â€”';return}const shown=$('afterHours').checked?primary.price*2:primary.price;$('livePrice').textContent=primary.price===0?'Review':money(shown);$('liveTime').textContent=customerTime(primary.displayMins)};
+
+const v16RenderAddons161=renderAddons;
+renderAddons=function(){captureScopeState();v16RenderAddons161();restoreScopeState();document.querySelectorAll('.addonCheck,.quickTask,.quickQty').forEach(x=>x.addEventListener('change',()=>{captureScopeState();updateBundle()}));if($('customPunch'))$('customPunch').addEventListener('input',captureScopeState);bindTapTargets()};
+function bindTapTargets(){document.querySelectorAll('.check').forEach(label=>{if(label.tagName!=='LABEL'){label.setAttribute('role','checkbox');label.tabIndex=0;const toggle=e=>{if(e.target.closest('input,select,textarea'))return;const input=label.querySelector('input[type="checkbox"]');if(input){input.checked=!input.checked;input.dispatchEvent(new Event('change',{bubbles:true}))}};label.onclick=toggle;label.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();toggle(e)}}}})}
+
+const v16GoTo161=goTo;
+goTo=function(n){if(n===3){const miss=firstMissing();if(miss){showMissing(miss);return}captureScopeState()}v16GoTo161(n)};
+
+function toggleReviewEditor(){reviewEditing=!reviewEditing;renderSummary()}
+const v16RenderSummary161=renderSummary;
+renderSummary=function(){v16RenderSummary161();const first=$('summary').querySelector('.summary-row');if(!first)return;const actions=first.querySelector('.summary-actions');actions.querySelectorAll('.edit-btn').forEach(x=>x.remove());actions.insertAdjacentHTML('beforeend','<button class="edit-btn" onclick="toggleReviewEditor()">'+(reviewEditing?'Done':'Edit')+'</button>');if(reviewEditing){const editor=document.createElement('div');editor.className='inline-editor';editor.innerHTML=$('detailForm').innerHTML;first.insertAdjacentElement('afterend',editor);editor.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));editor.innerHTML='<div class="notice">Edit the qualifier controls below. Changes update this Review immediately.</div>'+editor.innerHTML;const original=[...$('detailForm').querySelectorAll('select,textarea,input')],copies=[...editor.querySelectorAll('select,textarea,input')];copies.forEach((copy,i)=>{const src=original[i];if(!src)return;if(copy.type==='checkbox')copy.checked=src.checked;else copy.value=src.value;copy.addEventListener(copy.tagName==='TEXTAREA'?'input':'change',()=>{if(src.type==='checkbox')src.checked=copy.checked;else src.value=copy.value;src.dispatchEvent(new Event(copy.tagName==='TEXTAREA'?'input':'change',{bubbles:true}));calcPrimary();renderSummary()})});bindTapTargets()}
+  totals().rows.filter(x=>x.source==='quick').forEach(row=>{const target=[...$('summary').querySelectorAll('.summary-row')].find(r=>r.textContent.includes(row.task));if(target){const state=scopeState.quick[row.task]||{qty:String((row.name.match(/(\d+)$/)||[,1])[1])};target.querySelector('.summary-actions').insertAdjacentHTML('beforeend',`<select class="summary-select" aria-label="${row.task} quantity" onchange="setQuickQty('${row.task.replaceAll("'","\\'")}',this.value)">${[1,2,3,4,5,6].map(n=>`<option ${String(n)===String(state.qty)?'selected':''}>${n}</option>`).join('')}</select>`)}});
+  $('grandTotal').textContent=primary.price===0&&category!=='quickfix'?'Scope review':money(totals().total);
+  const pricing=totals(),bundleEfficiency=Math.max(0,pricing.standalone-(pricing.total+technicianDiscount));$('summary').insertAdjacentHTML('beforeend',`<div class="summary-row"><span>Subtotal</span><strong>${money(pricing.standalone)}</strong></div><div class="summary-row"><span>Bundle Efficiency</span><strong>${bundleEfficiency?'-'+money(bundleEfficiency):money(0)}</strong></div><div class="summary-row"><span>Technician Discount</span><strong>${technicianDiscount?'-'+money(technicianDiscount):money(0)}</strong></div>`);if(bundleEfficiency)$('savings').innerHTML='<strong>How Bundle Efficiency Works</strong><br>When multiple services are completed during the same visit, we save time on travel, setup, intake, and checkout. We share that efficiency with you by automatically reducing the cost of qualifying bundled services.';
+  const custom=[...totals().rows].find(x=>x.id==='customPunch');if(custom){const rows=[...$('summary').querySelectorAll('.summary-row')];const row=rows.find(r=>r.textContent.includes(custom.name));if(row)row.querySelector('small').innerHTML=`${scopeState.customPunch||$('customPunch').value}<br>We'll review this with your request.`}
+};
+function setQuickQty(task,value){scopeState.quick[task]=scopeState.quick[task]||{checked:true,qty:'1'};scopeState.quick[task].checked=true;scopeState.quick[task].qty=String(value);const box=[...document.querySelectorAll('.quickTask')].find(x=>x.dataset.task===task);if(box){box.checked=true;box.closest('.qty-row').querySelector('.quickQty').value=value}updateBundle();renderSummary()}
+
+const v16PrimaryReviewRequired161=primaryReviewRequired;
+primaryReviewRequired=function(){return totals().internalMins>720||v16PrimaryReviewRequired161()};
+const v16PrepareScheduling161=prepareScheduling;
+prepareScheduling=function(){const hours=totals().internalMins/60;if(totals().internalMins>720){bookingState='Capacity Routing';$('reviewScheduleNotice').classList.remove('hidden');$('scheduleTitle').textContent='This project needs a little more time';$('scheduleIntro').textContent=`Your selected services are estimated to require approximately ${hours.toFixed(1)} hours of work, which exceeds the existing normal scheduling window.`;$('reviewScheduleNotice').innerHTML='<strong>Split across multiple days</strong> (recommended)<br>or <strong>Request an extended service day</strong> (availability-dependent). No per-diem or team-pricing rule is assumed.';$('slotArea').classList.add('hidden');$('scheduleContinue').textContent='CONTINUE WITH MULTI-DAY REQUEST';$('scheduleDate').min=minDateForState();$('scheduleDate').value=$('date').value||minDateForState();selectedSlot='';return}v16PrepareScheduling161()};
+
+window.__V161__={version:V161,firstMissing,captureScopeState,restoreScopeState,capacityRoute:()=>totals().internalMins>720,getState:()=>({category,primary,scopeState,reviewEditing,bookingState})};
+window.addEventListener('load',()=>{document.querySelector('.test-badge').textContent='V1.6.1 TEST MODE Â· simulated availability & payment';bindTapTargets();logQA('v1.6.1-loaded')});
+</script>
+</body>
+</html>
+
