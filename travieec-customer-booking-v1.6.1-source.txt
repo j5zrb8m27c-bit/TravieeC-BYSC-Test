@@ -1,0 +1,9 @@
+Get-Content : Cannot find path 'C:\Users\Travi\Documents\Codex\2026-08-15\implement-travieec-bysc-v1-6-1\work\TravieeC-
+BYSC-Test\travieec-customer-booking-v1.6.1-source.txt' because it does not exist.
+At line:2 char:1
++ Get-Content -Raw 'travieec-customer-booking-v1.6.1-source.txt'
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\Travi\....6.1-source.txt:String) [Get-Content], ItemNotFoundEx 
+   ception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+ 
