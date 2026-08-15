@@ -1,0 +1,13 @@
+{
+  "name": "travieec-bysc-test",
+  "private": true,
+  "version": "1.6.1",
+  "scripts": {
+    "test": "playwright test",
+    "serve": "python -m http.server 8765"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0"
+  }
+}
+
