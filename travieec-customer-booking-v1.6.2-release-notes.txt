@@ -1,0 +1,18 @@
+TravieeC BYSC V1.6.2 Release Notes
+Date: 2026-08-15
+
+- Added audited Questionnaire Preservation Matrix across V1.5, V1.6, and V1.6.1.
+- Standardized repeatable quantities at 1–20 plus 20+ across questionnaire and Review.
+- Replaced the three-step repetition coefficients with the configured progressive 1.00–.15 curve.
+- Rebuilt Quick Fixes & Small Repairs as a true primary category with service-call-minimum copy.
+- Fixed upstream answer invalidation, quantity reset, stale flags, and validation cleanup.
+- Removed General Mounting diagnostic mode and added location and wall/ceiling qualifiers.
+- Added anchored General Mounting size/weight descriptions without unsupported load ratings.
+- Added fully priced, partially priced, and review-required estimate states.
+- Hid zero Bundle Efficiency and unapplied Technician Discount lines.
+- Added real multi-day and extended-day selection, start/end constraints, capacity validation,
+  per-day allocation, and availability-verification state.
+- Preserved V1.6.1 inline Review editing, confirmation, Request ID, failure recovery, deposits,
+  scheduling increments, materials policy, after-hours rules, and Core separation.
+
+No V1.5, V1.6, or V1.6.1 artifact was overwritten. TravieeC-booking was not modified.
