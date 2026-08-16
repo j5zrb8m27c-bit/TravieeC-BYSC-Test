@@ -1,0 +1,15 @@
+Product: TravieeC BYSC
+Version: 1.6.3
+Release type: Corrective architecture / regression QA
+Date: 2026-08-15
+Executable: travieec-customer-booking-v1.6.3.html
+Deployed root: index.html (byte-identical to executable)
+Source text: travieec-customer-booking-v1.6.3-source.txt
+QA: travieec-customer-booking-v1.6.3-qa.txt
+Release notes: travieec-customer-booking-v1.6.3-release-notes.txt
+Preservation matrix: travieec-questionnaire-preservation-matrix-v1.6.3.md
+Calculation matrix: travieec-calculation-regression-matrix-v1.6.3.md
+QA log review: travieec-test-mode-qa-log-review-v1.6.3.txt
+Regression tests: tests/v1.6.3-regression.spec.js
+Archive: travieec-customer-booking-v1.6.3-source.zip
+
