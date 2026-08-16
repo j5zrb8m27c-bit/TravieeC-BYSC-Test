@@ -1,0 +1,24 @@
+TravieeC BYSC V1.6.3 — Test Mode QA Log Review
+Date: 2026-08-15
+
+Actual rendered Test Mode logging was inspected during browser QA, not merely checked for existence.
+
+Verified events/classes:
+- v1.6.3-loaded
+- qa-force-authorization-failure-armed
+- authorization-failed
+  classification: simulated-payment-authorization
+  scopePreserved: true
+  schedulePreserved: true
+  falseConfirmation: false
+
+Observed behavior:
+- The useful customer-facing failure message was rendered.
+- Scope, estimate, and selected scheduling state remained intact.
+- No Request ID/confirmed appointment was created by the failed attempt.
+- The authorization control changed to RETRY AUTHORIZE & BOOK and remained enabled.
+
+Reconciliation:
+- The rendered log behavior agrees with the permanent authorization-failure regression test.
+- No manual-QA error indicated state corruption.
+
