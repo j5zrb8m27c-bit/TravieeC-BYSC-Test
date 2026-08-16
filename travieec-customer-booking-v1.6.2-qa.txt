@@ -1,0 +1,52 @@
+TravieeC BYSC V1.6.2 QA Report
+Date: 2026-08-15
+Release type: Regression recovery / workflow stabilization
+
+Questionnaire Preservation Audit
+- Audited Drive V1.5, V1.6, and V1.6.1 source artifacts before implementation.
+- Matrix artifact records Category, Branch, Question, Options, Reveal condition, Requirement,
+  downstream effects, pricing, timing, review triggers, source version, and disposition.
+- Preserved every qualifier group evidenced in the audited sources.
+- Restored Quick Fix as a primary renderer and V1.6.2 General Mounting flow.
+- Intentionally removed General Mounting diagnostic and similar-item questions per brief.
+- Unresolved: audited sources contain no Plumbing fixture-specific install follow-ups.
+
+Interactive browser QA passed
+- Quick Fix catalog renders immediately on primary detail card.
+- First Quick Fix establishes $130 service-call minimum; 12 repeated $35 tasks calculate $215
+  using the configured curve and approximately 61.5 internal minutes.
+- All observed quantity controls expose 1–20 plus 20+.
+- Bathroom faucet quantity 6 -> Garbage disposal clears quantity, stale modifiers, and price.
+- Continue blocks on the newly missing quantity; warning disappears immediately after answer.
+- General Mounting has no diagnostic path and reveals qualifiers sequentially.
+- Blinds/shades quantity 12 + Multiple rooms persists without a >10 quantity trigger.
+- Oversized 16.2-hour cart exposes clickable multi-day and extended-day choices.
+- Multi-day Day 1 8–12 plus Day 2 8–5 supplies 13.0 hours and is correctly blocked.
+- Extending capacity beyond 16.2 hours proceeds to Confirmation.
+- Extended day exposes constrained date/start/end controls and adds no surcharge.
+- JavaScript syntax validation passes for all four inline scripts.
+
+Progressive repetition verification
+- Configuration: 1.00, .85, .73, .62, .54, .47, .42, .37, .33, .30, .27,
+  .25, .23, .21, .20, .19, .18, .17, .16, .15.
+- Shared Core repeatFactor/repeatSum is consumed by qualifying repeated work.
+- 20+ uses 20 as the review-safe calculation anchor and never drops below .15.
+- Fixed modifiers such as appliance haul-away remain outside repeated-unit calculation.
+- General Mounting remains unpriced, so no fabricated repetition-price test was added.
+
+Estimate presentation
+- Fully priced, partially priced, and review-required states are distinguished.
+- Known-priced add-ons remain visible beneath review-required General Mounting.
+- Bundle Efficiency and Technician Discount lines hide when zero.
+- Quick Fix Review identifies the service-call minimum rather than calling each task $130.
+
+Permanent tests
+- Preserved tests/v1.6.1-regression.spec.js.
+- Added tests/v1.6.2-regression.spec.js for quantity parity, upstream reset, validation cleanup,
+  Quick Fix primary rendering/minimum, General Mounting, repetition curve, and zero lines.
+
+Travis Decisions Needed
+- Define Plumbing fixture-specific install follow-up questions/options/effects. None exists in V1.5,
+  V1.6, or V1.6.1, so V1.6.2 does not invent them.
+- Approve customer-facing General Mounting item pricing/time rules.
+- Approve any extended Electrical Diagnostic billing policy beyond the included first hour.
