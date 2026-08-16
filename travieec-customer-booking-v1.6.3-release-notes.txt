@@ -1,0 +1,17 @@
+TravieeC BYSC V1.6.3 — Release Notes
+Date: 2026-08-15
+
+Corrective architecture release based on V1.6.2.
+
+- Added explicit scope, qualifier, pricing, repetition, labor, appointment, review, scheduling, and authorization state domains.
+- Standardized repeatable quantities to 1–20 plus a typed 20+ review state; invalid numeric artifacts are rejected.
+- Reset price repetition independently per task type and separated price efficiency from labor duration.
+- Added structured multi-item Electrical and Furniture Assembly pathways.
+- Corrected blank prompts, downstream invalidation, validation cleanup, review quantity synchronization, and clickable labels.
+- Corrected Quick Fix primary privacy and customer-facing appointment-window presentation.
+- Corrected General Mounting context-sensitive qualifiers, including 12 Blinds/Shades without an irrelevant size/weight question.
+- Made >8 labor-hour capacity routing explicit and preserved authoritative multi-day/extended-day windows through confirmation.
+- Added deterministic authorization-failure QA with preservation and retry logging.
+
+No prior release artifact was overwritten. TravieeC-booking was not modified.
+
