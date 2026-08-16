@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TravieeC — Customer Booking Flow V1.6.1</title>
+<title>TravieeC — Customer Booking Flow V1.6.2</title>
 <style>
 :root{
   --bg:#080808;--panel:#111;--panel2:#171717;--text:#f6f1e5;--muted:#aaa18e;
@@ -73,6 +73,7 @@ input,select,textarea{width:100%;padding:13px;border-radius:11px;border:1px soli
 .question-block{border-top:1px solid #221f18;padding-top:4px;margin-top:8px}
 .missing{color:var(--danger);font-size:12px;margin-top:8px}
 .inline-editor{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.capacity-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.capacity-choice .choice{text-align:center}.day-card{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}.day-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.estimate-state{border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0;color:var(--gold2)}
 .question-block:first-child{border-top:0}
 .scope-detail{color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}
 .confirmed-card{border:2px solid #678650;background:#10170d;border-radius:18px;padding:20px;margin:12px 0}
@@ -895,6 +896,101 @@ prepareScheduling=function(){const hours=totals().internalMins/60;if(totals().in
 
 window.__V161__={version:V161,firstMissing,captureScopeState,restoreScopeState,capacityRoute:()=>totals().internalMins>720,getState:()=>({category,primary,scopeState,reviewEditing,bookingState})};
 window.addEventListener('load',()=>{document.querySelector('.test-badge').textContent='V1.6.1 TEST MODE · simulated availability & payment';bindTapTargets();logQA('v1.6.1-loaded')});
+</script>
+<script>
+/* V1.6.2 regression recovery: configuration + reusable Core mechanics. */
+const BYSC_CONFIG_V162={
+  version:'1.6.2',
+  quantity:{maxNormal:20,reviewValue:'20+'},
+  repetitionCurve:[1,.85,.73,.62,.54,.47,.42,.37,.33,.30,.27,.25,.23,.21,.20,.19,.18,.17,.16,.15],
+  repetitionFloor:.15,
+  scheduling:{normalWindowMinutes:720},
+  questionnaireStatus:{appliance:'Preserved',plumbing:'Preserved; fixture-specific install follow-ups unresolved',tv:'Preserved',electrical:'Preserved',furniture:'Preserved',drywall:'Preserved',painting:'Preserved',yard:'Preserved',cleaning:'Preserved',quickfix:'Restored as primary renderer',mounting:'Restored/updated per V1.6.2'}
+};
+repeatFactor=function(index){return BYSC_CONFIG_V162.repetitionCurve[Math.min(index,BYSC_CONFIG_V162.repetitionCurve.length-1)]??BYSC_CONFIG_V162.repetitionFloor};
+function quantityOptions(selected='1'){return [...Array(20)].map((_,i)=>`<option ${String(i+1)===String(selected)?'selected':''}>${i+1}</option>`).join('')+`<option value="20+" ${selected==='20+'?'selected':''}>20+</option>`}
+function normalizeQuantitySelect(select){if(!select)return;const value=select.value||'1';select.innerHTML=quantityOptions(value);select.value=[...select.options].some(o=>o.value===value)?value:'1'}
+function normalizeAllQuantities(root=document){['pQty','tvQty','eQty','fQty','mQty','aQty'].forEach(id=>normalizeQuantitySelect(root.querySelector('#'+id)));root.querySelectorAll('.quickQty,.quickPrimaryQty,.summary-select').forEach(normalizeQuantitySelect)}
+function clearValidation(el){if(el&&String(el.value||'').trim()){el.parentElement?.querySelectorAll(':scope > .missing').forEach(x=>x.remove());el.nextElementSibling?.classList?.contains('missing')&&el.nextElementSibling.remove();missingQuestion=''}}
+
+const v161RenderDetails162=renderDetails;
+renderDetails=function(){
+  v161RenderDetails162();
+  if(category==='quickfix'){renderQuickFixPrimary();return}
+  if(category==='mounting')renderMountingV162();
+  if(category==='appliance'&&$('aInstallWrap')&&!$('aQty')){$('aItem').insertAdjacentHTML('afterend',`<select id="aQty" aria-label="How many matching appliances?" data-required="true"><option value="" selected disabled>How many matching appliances?</option>${quantityOptions()}</select>`)}
+  normalizeAllQuantities($('detailForm'));
+  if(category==='plumbing'){$('pQty').innerHTML='<option value="" selected disabled>How many matching fixtures?</option>'+quantityOptions();$('pItem').addEventListener('change',()=>{$('pQty').value='';$('pQty').dataset.answered='false';primary.flags=[];calcPrimary()})}
+  if(category==='electrical')$('eQty').innerHTML='<option value="" selected disabled>How many matching devices?</option>'+quantityOptions();
+  if(category==='tv')$('tvQty').innerHTML='<option value="" selected disabled>How many TVs?</option>'+quantityOptions();
+  if(category==='furniture')$('fQty').innerHTML='<option value="" selected disabled>How many matching pieces?</option>'+quantityOptions();
+  $('detailForm').querySelectorAll('select,textarea').forEach(el=>el.addEventListener(el.tagName==='TEXTAREA'?'input':'change',()=>clearValidation(el)));
+  setupSequentialDisclosure();
+};
+
+function renderQuickFixPrimary(){
+  $('detailTitle').textContent='Quick Fixes & Small Repairs';$('detailIntro').textContent='Choose one or more defined qualifying tasks. A service-call minimum applies to a standalone visit.';
+  $('detailForm').innerHTML=addonData.filter(a=>a.examples).map(a=>`<div class="scope-card quick-primary-class"><div class="scope-title"><div><strong>${a.name}</strong><div class="addon-desc" style="margin-left:0">${a.desc}</div></div><strong>${money(a.price)} task value</strong></div>${a.examples.map(task=>`<div class="qty-row"><label class="check"><input type="checkbox" class="quickPrimaryTask" data-class="${a.id}" data-task="${task}" data-price="${a.price}" data-mins="${a.mins}"><span>${task}</span></label><div><select class="quickPrimaryQty" aria-label="${task} quantity">${quantityOptions()}</select></div></div>`).join('')}</div>`).join('')+`<div class="scope-card"><label class="check"><input type="checkbox" id="quickPrimaryOther"><span>Something else</span></label><div id="quickPrimaryOtherWrap" class="hidden"><textarea id="quickPrimaryOtherText" placeholder="Describe the repair."></textarea><div class="notice">We'll review this with your request.</div></div></div>`;
+  $('detailForm').querySelectorAll('.quickPrimaryTask,.quickPrimaryQty').forEach(x=>x.addEventListener('change',calcPrimary));$('quickPrimaryOther').onchange=()=>{$('quickPrimaryOtherWrap').classList.toggle('hidden',!$('quickPrimaryOther').checked);if(!$('quickPrimaryOther').checked)$('quickPrimaryOtherText').value='';calcPrimary()};$('quickPrimaryOtherText').oninput=calcPrimary;calcPrimary();bindTapTargets();
+}
+
+function renderMountingV162(){
+  $('detailForm').innerHTML=`<select id="mItem" data-required="true"><option value="" selected disabled>What are you mounting?</option><option>Shelves / shelving</option><option>Curtain rods / window hardware</option><option>Pictures / artwork</option><option>Mirrors</option><option>Hooks / racks / organizers</option><option>Blinds / shades</option><option>Wall cabinets</option><option>Whiteboards / bulletin boards</option><option>Privacy screens / room dividers</option><option>Other wall-mounted item</option><option>Something else</option></select>
+  <select id="mQty" data-required="true"><option value="" selected disabled>How many items?</option>${quantityOptions()}</select>
+  <select id="mLocation" data-required="true"><option value="" selected disabled>Where will the work be completed?</option><option>Living room</option><option>Bedroom</option><option>Bathroom</option><option>Kitchen</option><option>Office</option><option>Hallway</option><option>Garage</option><option>Exterior</option><option>Multiple rooms</option><option>Something else</option></select>
+  <select id="mPlane" data-required="true"><option value="" selected disabled>Will items be mounted on a wall or ceiling?</option><option>Wall</option><option>Ceiling</option><option>Mixed / both</option><option>Not sure</option></select>
+  <select id="mWall" data-required="true"><option value="" selected disabled>What is the mounting surface?</option><option>Drywall / wood studs</option><option>Brick / concrete</option><option>Tile</option><option>Stone</option><option>Other / not sure</option></select>
+  <select id="mHeight" data-required="true"><option value="" selected disabled>What is the mounting height?</option><option>Standard — mounting point at 5 ft or below</option><option>High wall — mounting point above 5 ft / ladder required</option></select>
+  <select id="mSize" data-required="true"><option value="" selected disabled>What size / weight is the item?</option><option>Small / light — compact and comfortably held by one person</option><option>Medium — larger item that benefits from two-hand positioning</option><option>Large / heavy — bulky, difficult for one person to hold, or typically needs substantial anchoring</option><option>Not sure — upload a photo or product link</option></select>
+  <select id="mAssembly" data-required="true"><option value="" selected disabled>Does the item require assembly?</option><option>No</option><option>Yes</option><option>Not sure</option></select>
+  <select id="mHardware" data-required="true"><option value="" selected disabled>Is mounting hardware available?</option><option>Yes</option><option>No</option><option>Not sure</option></select>
+  <div id="mOtherWrap" class="hidden"><textarea id="mOther" data-required="false" placeholder="Describe the item or location."></textarea></div>`;
+  $('detailForm').querySelectorAll('select,textarea').forEach(x=>x.addEventListener(x.tagName==='TEXTAREA'?'input':'change',()=>{const other=['Something else','Other wall-mounted item'].includes($('mItem').value)||$('mLocation').value==='Something else';$('mOtherWrap').classList.toggle('hidden',!other);$('mOther').dataset.required=String(other);if(!other)$('mOther').value='';clearValidation(x);calcPrimary()}));setupSequentialDisclosure();calcPrimary();
+}
+
+function quickPrimaryCalculation(){let raw=0,mins=0,rows=[];const counters={};document.querySelectorAll('.quickPrimaryTask:checked').forEach(box=>{const qv=box.closest('.qty-row').querySelector('.quickPrimaryQty').value,q=qv==='20+'?20:+qv,cls=box.dataset.class;counters[cls]=counters[cls]||0;let amount=0,time=0;for(let i=0;i<q;i++){const f=repeatFactor(counters[cls]++);amount+=+box.dataset.price*f;time+=+box.dataset.mins*f}raw+=amount;mins+=time;rows.push({id:cls,task:box.dataset.task,name:`${box.dataset.task} × ${qv}`,qty:qv,price:Math.round(amount),mins:Math.round(time),source:'quick-primary'});});return{raw:Math.round(raw),total:rows.length?Math.max(130,Math.round(raw)):0,mins:Math.round(mins),rows,minimumApplied:rows.length&&raw<130}}
+const v161CalcPrimary162=calcPrimary;
+calcPrimary=function(){
+  if(category==='quickfix'){const q=quickPrimaryCalculation(),other=$('quickPrimaryOther')?.checked;primary={name:'Quick Fixes & Small Repairs',price:q.total,displayMins:q.mins,internalMins:q.mins,flags:other?["Something else — we'll review this with your request." ]:[],photo:'Photos of each repair help confirm qualifying scope.',invasive:false,incomplete:!q.rows.length&&!other};updatePrimaryDisplay();return}
+  if(category==='mounting'){const item=$('mItem')?.value||'General Mounting',other=$('mOther')?.value?.trim()||'';primary={name:item==='Something else'?'Something else':'General Mounting',price:0,displayMins:0,internalMins:0,flags:['General Mounting primary scope: Pending Review'],photo:'Please include the item, mounting surface, hardware, and full work area.',invasive:true,incomplete:!!firstMissing(),scopeText:other};updatePrimaryDisplay();return}
+  const repeatId={plumbing:'pQty',electrical:'eQty',tv:'tvQty',furniture:'fQty'}[category],repeatEl=repeatId&&$(repeatId),repeatReview=repeatEl?.value==='20+';if(repeatReview)repeatEl.value='20';v161CalcPrimary162();if(repeatReview){repeatEl.value='20+';primary.flags.push('20+ quantity requires review/capacity confirmation.');primary.name=primary.name.replace(/× 20/,'× 20+')}
+  if(category==='plumbing'&&$('pMode')?.value==='install'){const qv=$('pQty').value,q=qv==='20+'?20:+qv,[base]=split3('pItem');primary.standalonePrice=base*q}
+  if(category==='electrical'&&$('eMode')?.value==='install'){const qv=$('eQty').value,q=qv==='20+'?20:+qv,[base]=split3('eItem');primary.standalonePrice=base*q}
+  if(category==='tv'){const qv=$('tvQty').value,q=qv==='20+'?20:+qv,[base]=split3('tvItem');primary.standalonePrice=base*q}
+  if(category==='appliance'&&$('aMode')?.value==='install'&&$('aQty')){const qv=$('aQty').value,q=qv==='20+'?20:+qv;if(q>1){const basePrice=primary.price,baseMins=primary.internalMins;primary.price=Math.round(repeatSum(basePrice,q));primary.internalMins=primary.displayMins=Math.round(repeatSum(baseMins,q));primary.standalonePrice=basePrice*q;primary.name+=` × ${qv}`;if(qv==='20+')primary.flags.push('20+ quantity requires review/capacity confirmation.')}}
+};
+
+const v161Totals162=totals;
+totals=function(){const t=v161Totals162();if(category==='quickfix'){const q=quickPrimaryCalculation(),undiscounted=[...document.querySelectorAll('.quickPrimaryTask:checked')].reduce((s,b)=>{const v=b.closest('.qty-row').querySelector('.quickPrimaryQty').value,n=v==='20+'?20:+v;return s+(+b.dataset.price*n)},0);t.total=q.total;t.standalone=Math.max(130,undiscounted);t.displayMins=t.internalMins=q.mins;t.rows=q.rows;t.minimumApplied=q.minimumApplied}else if(primary.standalonePrice>primary.price)t.standalone+=primary.standalonePrice-primary.price;return t};
+const v161UpdatePrimary162=updatePrimaryDisplay;
+updatePrimaryDisplay=function(){if(category==='quickfix'){const q=quickPrimaryCalculation();$('livePrice').textContent=q.rows.length?money(q.total):'—';$('liveTime').textContent=q.rows.length?customerTime(q.mins):'—';return}if(category==='mounting'){$('livePrice').textContent=$('mItem')?.value?'Pending Review':'—';$('liveTime').textContent=$('mItem')?.value?'Pending Review':'—';return}v161UpdatePrimary162()};
+const v161UpdateBundle162=updateBundle;
+updateBundle=function(){const t=totals();if(primary.price===0&&t.total>0){$('bundlePrice').textContent=`Known estimated amount: ${money(t.total)}`;$('bundleTime').textContent=`Known estimated time: ${customerTime(t.displayMins)} · Additional scope pending review`;return}v161UpdateBundle162()};
+
+const v161RenderAddons162=renderAddons;
+renderAddons=function(){v161RenderAddons162();normalizeAllQuantities($('addonList'));if(category==='quickfix')document.querySelectorAll('.quick-primary-class,.quickTask').forEach(x=>x.closest('.scope-card')?.classList.add('hidden'))};
+
+const v161RenderSummary162=renderSummary;
+renderSummary=function(){v161RenderSummary162();normalizeAllQuantities($('summary'));const t=totals();$('summary').querySelectorAll('.summary-row').forEach(row=>{const small=row.querySelector('small');if(small&&/standalone \$130/i.test(small.textContent))small.textContent='Included in service-call minimum'});const eff=Math.max(0,t.standalone-(t.total+technicianDiscount));[...$('summary').querySelectorAll('.summary-row')].forEach(row=>{if(row.textContent.includes('Bundle Efficiency')&&!eff)row.remove();if(row.textContent.includes('Technician Discount')&&!technicianDiscount)row.remove()});if(primary.price===0&&t.total>0){$('grandTotal').textContent=`Known estimated amount: ${money(t.total)}`;$('summary').insertAdjacentHTML('beforeend',`<div class="estimate-state"><strong>Additional scope pending review</strong><br>Known estimated time: ${customerTime(Math.max(0,t.displayMins-primary.displayMins))}</div>`)}if(category==='quickfix'&&t.minimumApplied){$('summary').insertAdjacentHTML('afterbegin','<div class="estimate-state"><strong>Service-call minimum</strong><br>Selected qualifying tasks are included in the minimum visit estimate.</div>')}};
+
+const v161SetPrimaryQty162=setPrimaryQty;
+setPrimaryQty=function(value){if(value==='20+'){const id={plumbing:'pQty',electrical:'eQty',tv:'tvQty',furniture:'fQty',appliance:'aQty',mounting:'mQty'}[category];if(id&&$(id))$(id).value='20+'}else v161SetPrimaryQty162(value);calcPrimary();renderSummary()};
+const v161GoTo162=goTo;
+goTo=function(n){if(n===3&&category==='quickfix'&&!quickPrimaryCalculation().rows.length&&!$('quickPrimaryOther')?.checked){let msg=$('detailForm').querySelector('.missing');if(!msg){msg=document.createElement('div');msg.className='missing';msg.textContent='Choose at least one qualifying task or Something else to continue.';$('detailForm').appendChild(msg)}return}v161GoTo162(n)};
+
+let capacityPlan={mode:'',days:[]};
+primaryReviewRequired=function(){return v16PrimaryReviewRequired161()};
+function timeChoices(){let h='';for(let m=6*60;m<=22*60;m+=30){const v=String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');h+=`<option value="${v}">${new Date('2000-01-01T'+v).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</option>`}return h}
+function dayCard(i){return `<div class="day-card" data-day="${i}"><strong>Day ${i+1}</strong><div class="day-grid"><input type="date" class="dayDate"><select class="dayStart">${timeChoices()}</select><select class="dayEnd">${timeChoices()}</select></div><small class="dayCapacity muted"></small></div>`}
+function renderCapacityDays(count=2){$('capacityDays').innerHTML=[...Array(count)].map((_,i)=>dayCard(i)).join('');document.querySelectorAll('.dayStart').forEach(x=>x.value='08:00');document.querySelectorAll('.dayEnd').forEach(x=>x.value='17:00')}
+function readCapacityDays(){return [...document.querySelectorAll('#capacityDays .day-card')].map((d,i)=>{const date=d.querySelector('.dayDate').value,start=d.querySelector('.dayStart').value,end=d.querySelector('.dayEnd').value,available=Math.max(0,(+end.slice(0,2)*60 + +end.slice(3))-(+start.slice(0,2)*60 + +start.slice(3)));return{day:i+1,date,start,end,availableAppointmentMinutes:available}})}
+function allocateDays(days,labor){let remaining=labor;return days.map(d=>{const allocated=Math.min(remaining,d.availableAppointmentMinutes);remaining-=allocated;return{...d,allocatedLaborMinutes:allocated,remainingLaborMinutes:Math.max(0,remaining),availabilityVerified:true}})}
+function chooseCapacityMode(mode){capacityPlan.mode=mode;document.querySelectorAll('.capacity-choice .choice').forEach(x=>x.classList.toggle('selected',x.dataset.mode===mode));$('capacityDaysWrap').classList.toggle('hidden',mode!=='split');$('extendedWrap').classList.toggle('hidden',mode!=='extended')}
+prepareScheduling=function(){const t=totals();if(t.internalMins<=BYSC_CONFIG_V162.scheduling.normalWindowMinutes)return v16PrepareScheduling161();bookingState='Capacity Routing';selectedSlot='';$('scheduleTitle').textContent='This project needs a little more time';$('scheduleIntro').textContent=`Estimated labor: ${(t.internalMins/60).toFixed(1)} hours. Choose how you would like to provide appointment capacity.`;$('slotArea').classList.add('hidden');$('reviewScheduleNotice').classList.remove('hidden');$('reviewScheduleNotice').innerHTML=`<div class="capacity-choice"><button type="button" class="choice" data-mode="split" onclick="chooseCapacityMode('split')"><strong>Split across multiple days</strong></button><button type="button" class="choice" data-mode="extended" onclick="chooseCapacityMode('extended')"><strong>Request an extended service day</strong></button></div><div id="capacityDaysWrap" class="hidden"><div id="capacityDays"></div><button type="button" class="edit-btn" onclick="renderCapacityDays(document.querySelectorAll('.day-card').length+1)">Add service day</button></div><div id="extendedWrap" class="hidden"><div class="day-card"><strong>Extended service day</strong><div class="day-grid"><input type="date" id="extendedDate"><select id="extendedStart">${timeChoices()}</select><select id="extendedEnd">${timeChoices()}</select></div><p class="helper">Availability is conditional. No extended-day surcharge has been added.</p></div></div><div id="capacityError" class="missing hidden"></div>`;renderCapacityDays(2);$('scheduleContinue').textContent='VERIFY CAPACITY & CONTINUE'};
+$('scheduleContinue').addEventListener('click',e=>{if(!$('capacityDays'))return;e.preventDefault();e.stopImmediatePropagation();const labor=totals().internalMins,err=$('capacityError');let days=[];if(capacityPlan.mode==='split')days=readCapacityDays();else if(capacityPlan.mode==='extended'){const date=$('extendedDate').value,start=$('extendedStart').value,end=$('extendedEnd').value,available=Math.max(0,(+end.slice(0,2)*60 + +end.slice(3))-(+start.slice(0,2)*60 + +start.slice(3)));days=[{day:1,date,start,end,availableAppointmentMinutes:available}]}else{err.textContent='Choose Split across multiple days or Request an extended service day.';err.classList.remove('hidden');return}if(days.some(d=>!d.date||d.availableAppointmentMinutes<=0)){err.textContent='Choose a date, start time, and later end time for every service day.';err.classList.remove('hidden');return}const capacity=days.reduce((s,d)=>s+d.availableAppointmentMinutes,0);if(capacity<labor){err.textContent=`More service time is required. Selected windows provide ${(capacity/60).toFixed(1)} hours for ${(labor/60).toFixed(1)} estimated labor hours. Extend a window or add another service day.`;err.classList.remove('hidden');return}capacityPlan.days=allocateDays(days,labor);capacityPlan.totalAvailableMinutes=capacity;capacityPlan.estimatedLaborMinutes=labor;capacityPlan.availabilityVerified=true;logQA('capacity-plan-verified',capacityPlan);bookingState='Capacity Verified';goTo(7)},true);
+
+window.__V162__={config:BYSC_CONFIG_V162,repeatFactor,quantityOptions,quickPrimaryCalculation,readCapacityDays,allocateDays,getCapacityPlan:()=>capacityPlan};
+window.addEventListener('load',()=>{document.title='TravieeC — Customer Booking Flow V1.6.2';document.querySelector('.test-badge').textContent='V1.6.2 TEST MODE · simulated availability & payment';logQA('v1.6.2-loaded')});
 </script>
 </body>
 </html>
