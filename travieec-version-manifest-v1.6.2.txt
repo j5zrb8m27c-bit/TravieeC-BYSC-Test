@@ -1,0 +1,19 @@
+TravieeC BYSC Version Manifest
+Version: V1.6.2
+Date: 2026-08-15
+Status: QA deployment
+Source: TravieeC BYSC Development / V1.6.1
+Audit sources: V1.5, V1.6, V1.6.1
+Repository: j5zrb8m27c-bit/TravieeC-BYSC-Test
+Branch: main
+
+Artifacts
+- travieec-customer-booking-v1.6.2.html
+- travieec-customer-booking-v1.6.2-source.txt
+- travieec-questionnaire-preservation-matrix-v1.6.2.md
+- travieec-customer-booking-v1.6.2-qa.txt
+- travieec-customer-booking-v1.6.2-release-notes.txt
+- travieec-version-manifest-v1.6.2.txt
+- travieec-customer-booking-v1.6.2-source.zip
+
+Integrity requirement: root index.html equals the named V1.6.2 executable.
