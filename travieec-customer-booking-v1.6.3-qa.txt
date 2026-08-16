@@ -1,0 +1,38 @@
+TravieeC BYSC V1.6.3 — QA Report
+Date: 2026-08-15
+
+Static validation
+- Five inline JavaScript programs: PASS (Node syntax check)
+- Regression specification syntax: PASS
+- Prior V1.6.1 and V1.6.2 artifacts retained: PASS
+
+Browser validation
+- Version/title and Test Mode badge: PASS
+- Blank Plumbing/Electrical/Furniture/General Mounting prompts: PASS
+- Electrical multi-item live calculation: PASS ($387 / 1.5 hr for 3 standard fixtures)
+- Plumbing upstream branch invalidation: PASS
+- Typed 20+ calculation safety/no NaN: PASS
+- 12 Blinds/Shades: PASS; quantity accepted and size/weight suppressed
+- Repetition reset by task identity: PASS
+- Price curve separated from labor: PASS
+- Quick Fix primary privacy: PASS
+- Multi-day/extended-day capacity model and authoritative confirmation renderer: PASS
+- Clickable label binding: PASS
+- Deterministic authorization failure, state preservation, log entry, retry affordance: PASS
+
+Automated suite
+- Permanent Playwright regression suite added.
+- Full CLI execution was unavailable in this environment because package installation/network access was restricted. Equivalent high-risk paths were exercised in the in-app browser and the test sources passed syntax validation.
+
+Manual scenarios executed
+- A Plumbing reset: PASS
+- B Mixed repetition bundle: PASS (calculation-level)
+- C Large workload/capacity routing: PASS
+- D Roman shades ×12: PASS
+- E Multi-Day insufficient/exact capacity: PASS
+- F Extended Day confirmation content: PASS
+- G Simulated authorization failure and retry: PASS
+
+Known defects
+- None known in the V1.6.3 correction scope.
+
