@@ -1,0 +1,18 @@
+Product: TravieeC BYSC
+Version: 1.6.4
+Release type: State Integrity, Review Integrity & Pricing Architecture Correction
+Date: 2026-08-20
+Executable: travieec-customer-booking-v1.6.4.html
+Deployed root: index.html (byte-identical)
+Source: travieec-customer-booking-v1.6.4-source.txt
+Archive: travieec-customer-booking-v1.6.4-source.zip
+QA: travieec-customer-booking-v1.6.4-qa.txt
+Release notes: travieec-customer-booking-v1.6.4-release-notes.txt
+Preservation matrix: travieec-questionnaire-preservation-matrix-v1.6.4.md
+Calculation matrix: travieec-calculation-regression-matrix-v1.6.4.md
+Test Mode log review: travieec-test-mode-qa-log-review-v1.6.4.txt
+State integrity: travieec-state-integrity-report-v1.6.4.md
+Scheduling validation: travieec-scheduling-validation-report-v1.6.4.md
+Pricing diagnostic: travieec-pricing-diagnostic-report-v1.6.4.md
+Regression tests: tests/v1.6.4-regression.spec.js
+
