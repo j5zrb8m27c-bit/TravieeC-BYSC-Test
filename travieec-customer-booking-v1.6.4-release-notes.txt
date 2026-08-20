@@ -1,0 +1,19 @@
+TravieeC BYSC V1.6.4 — Release Notes
+Date: 2026-08-20
+
+Corrective stabilization release. No unrelated category expansion was introduced.
+
+- Scoped estimators to canonical questionnaire state so Review clones cannot duplicate price or labor.
+- Added global canonical qualifier rendering on Review and pre-authorization screens.
+- Corrected Quick Fix Review removal, quantity synchronization, idempotent Edit/Done, privacy, and Back navigation.
+- Strengthened reusable per-item Electrical/Furniture state isolation and truthful partial estimates.
+- Connected approved Bookcase Small/Medium/Large/Not sure timing anchors to both labor and price.
+- Added Nightstand as selectable pending estimator approval.
+- Added explicit review reasons and removed duration/cart-size-only Review routing.
+- Separated service-call minimum, task value, repeated-task efficiency, shared-visit efficiency, and labor diagnostics.
+- Added a single authoritative 8-hour capacity boundary.
+- Added America/Los_Angeles scheduling and live 90-minute target / 5-minute tolerance validation.
+- Expanded Test Mode calculation, state, Review, capacity, scheduling, availability, and authorization diagnostics.
+
+Prior versions are preserved. TravieeC-booking was not modified.
+
