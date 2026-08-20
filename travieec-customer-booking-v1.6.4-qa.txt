@@ -1,0 +1,36 @@
+TravieeC BYSC V1.6.4 — QA Report
+Date: 2026-08-20
+
+Static QA
+- Six inline JavaScript programs: PASS
+- V1.6.4 regression specification syntax: PASS
+- Named executable/root identity check: PASS before packaging
+
+Browser/manual QA
+- V1.6.4 load and console errors: PASS (no errors)
+- Review Edit → Done without changes: PASS; identical rows/total and unchanged=true QA event
+- Review Remove: PASS; canonical selected count and Review row count both decreased
+- Back from Review: PASS; current selected scope restored on service-details step
+- Electrical four-item coexistence: PASS
+- Electrical partial estimate while new item incomplete: PASS ($416+ retained)
+- Furniture Bookcase Small vs Large estimator effect: PASS ($130/<1h vs $205/2.2h for tested two-unit case)
+- General Mounting Blinds/Shades ×12: PASS; size hidden, sequential next control only
+- Quick Fix fully known reviewReason: PASS (false / empty array)
+- Plumbing known minimum before quantity: PASS ($130+)
+- TV known starting estimate: PASS
+- Same-day live slot filtering in Pacific time: PASS; first displayed slot was beyond the minimum
+- Global >8-hour capacity route: PASS
+- Extended Day pre-auth actual date/window/labor/scope/estimate: PASS
+- Quick Fix internal allocations suppressed at Review and corrected at pre-auth: PASS
+
+Automated QA
+- Permanent Playwright regression suite added for V1.6.4.
+- Full Playwright CLI execution was not available because @playwright/test is not installed in the offline bundled runtime. Browser scenarios were executed through the connected in-app browser; source and test syntax passed.
+
+Preservation
+- Appliance, Plumbing, TV, Painting, Yard, Cleaning, Drywall/Multi-Day approved flows retained.
+- House Cleaning pet maximum 6 retained as a contextual-count exception.
+
+Known defects / evidence limits
+- Historical Plumbing and House Cleaning target events were absent from the accumulated live Test Mode log, so their exact historical runtime cause cannot be certified from an actual retained event.
+
