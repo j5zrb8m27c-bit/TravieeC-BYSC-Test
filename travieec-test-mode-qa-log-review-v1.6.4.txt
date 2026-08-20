@@ -1,0 +1,27 @@
+TravieeC BYSC V1.6.4 — Test Mode QA Log Review
+Date: 2026-08-20
+
+Actual accumulated log inspected from the live GitHub Pages application: YES.
+
+Retained contents:
+- V1.6/V1.6.1/V1.6.2/V1.6.3 load events across sessions.
+- No retained Plumbing slot-selection/authorization/final-availability event.
+- No retained House Cleaning slot-selection/authorization/final-availability event.
+
+Conclusion:
+The requested exact historical failure causes are not present in the retained live log and cannot be certified without invention. Source inspection confirmed missing same-day filtering, deterministic repeat failure for a failing session/date/slot seed, and loss of the selected slot in the old failure log because it was cleared before logging.
+
+V1.6.4 additions:
+- canonical state and qualifier snapshot;
+- explicit reviewRequired/reviewReason;
+- price and labor traces;
+- bundle sanity ratio;
+- capacity route;
+- Pacific current/appointment timestamps;
+- same-day lead calculation;
+- availability and authorization validation state;
+- Review idempotency event.
+
+Observed V1.6.4 event:
+`review-edit-idempotency` with `unchanged:true`.
+
