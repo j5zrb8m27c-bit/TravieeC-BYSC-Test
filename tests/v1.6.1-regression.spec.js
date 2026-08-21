@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('playwright/test');
 
 const openCategory = async (page, name) => {
   await page.goto('/');
@@ -42,26 +42,25 @@ test('electrical quantities include 1-10 and 10+ without diagnostic price multip
 
 test('Quick Fix catalog, quantity persistence, Review quantity edit, and remove/re-add', async ({ page }) => {
   await openCategory(page, 'Quick Fixes');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  const task = page.locator('.quickTask[data-task="Toilet seat"]');
+  const task = page.locator('.quickPrimaryTask[data-task="Toilet seat"]');
   await task.check();
-  await task.locator('xpath=ancestor::*[contains(@class,"qty-row")]').locator('.quickQty').selectOption('3');
+  await task.locator('xpath=ancestor::*[contains(@class,"qty-row")]').locator('.quickPrimaryQty').selectOption('3');
+  await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('button', { name: 'Review Estimate' }).click();
-  await expect(page.getByLabel('Toilet seat quantity')).toHaveValue('3');
-  await page.getByLabel('Toilet seat quantity').selectOption('2');
-  await expect(page.getByText(/Toilet seat/)).toBeVisible();
+  await expect(page.locator('[data-qf-task="Toilet seat"]')).toHaveValue('3');
+  await page.locator('[data-qf-task="Toilet seat"]').selectOption('2');
+  await expect(page.locator('#summary').getByText(/Toilet seat × 2/)).toBeVisible();
 });
 
 test('General Mounting is a standalone sequential review path', async ({ page }) => {
   await openCategory(page, 'General Mounting');
-  await expect(page.locator('#mMode')).toHaveValue('');
-  await page.locator('#mMode').selectOption('mount');
+  await expect(page.locator('#mMode')).toHaveCount(0);
   await expect(page.locator('#mItem')).toBeVisible();
   await expect(page.locator('#mQty')).toBeHidden();
   await page.locator('#mItem').selectOption('Privacy screens / room dividers');
   await expect(page.locator('#mQty')).toBeVisible();
-  await expect(page.locator('#livePrice')).toHaveText('Review');
+  await expect(page.locator('#livePrice')).toHaveText('Pending Review');
 });
 
 test('checkbox card text is a tap target', async ({ page }) => {

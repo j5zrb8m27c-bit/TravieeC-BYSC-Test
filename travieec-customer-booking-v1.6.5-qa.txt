@@ -1,0 +1,29 @@
+TravieeC BYSC V1.6.5 — QA Report
+Date: 2026-08-20
+
+Automated browser regression: 52 passed, 0 failed.
+V1.6.5-focused suite: 11 passed, 0 failed.
+JavaScript syntax: 7 inline scripts checked successfully.
+
+Verified:
+- Capacity boundary at 7.9, 8.0, 8.1, 8.5, 9.1, and 12.0 hours.
+- Scheduling date authority and removal of customer-visible Preferred Day.
+- Electrical diagnostic location count does not independently create Review.
+- Furniture sequential qualifiers, item-isolated invalidation, Bookcase descriptions, and Pending Review rather than $0.
+- Quick Fix additions, conditional refrigerator-filter follow-up, pricing privacy, quantity state, and one Remove control.
+- Canonical pre-authorization renderer.
+- No customer-visible NaN, undefined, null, or Infinity.
+- Price repetition does not compress labor.
+- Simulated authorization failure preserves scope/schedule, creates no false confirmation, logs failure, and enables retry.
+
+Manual browser scenarios executed through the customer UI:
+- Electrical diagnostic qualifier flow.
+- Furniture Bookcase/Nightstand and two-item invalidation flow.
+- Quick Fix selection, quantity edit, Review removal, and refrigerator-filter follow-up.
+- Standard scheduling and canonical pre-authorization.
+- Simulated authorization failure/retry.
+
+Test Mode logs inspected: Yes, the visible current-session QA log was inspected and reconciled with browser results. Historical logs from earlier manual sessions were not available because V1.6.4 logging is DOM/session-only and has no durable export sink.
+
+Known defects: none found in the released regression matrix.
+

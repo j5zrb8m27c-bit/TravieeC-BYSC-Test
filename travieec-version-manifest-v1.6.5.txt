@@ -1,0 +1,14 @@
+Product: TravieeC Book Your Service Call
+Version: 1.6.5
+Release type: Stabilization / correction
+Release date: 2026-08-20
+Executable: travieec-customer-booking-v1.6.5.html
+Deployed root: index.html (byte-identical to executable)
+Source text: travieec-customer-booking-v1.6.5-source.txt
+Source archive: travieec-customer-booking-v1.6.5-source.zip
+Regression tests: tests/v1.6.5-regression.spec.js plus preserved V1.6.1–V1.6.4 suites
+Business timezone: America/Los_Angeles
+Capacity authority: <=480 minutes standard; >480 minutes Split/Extended
+Prior version artifacts: preserved
+TravieeC-booking repository: not modified
+

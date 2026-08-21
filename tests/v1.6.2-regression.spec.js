@@ -1,9 +1,9 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('playwright/test');
 const qs = [...Array(20)].map((_,i)=>String(i+1)).concat('20+');
 async function category(page,name){await page.goto('/');await page.getByRole('button',{name:new RegExp(name)}).click()}
 
 test('configured repetition curve and floor',async({page})=>{await page.goto('/');const factors=await page.evaluate(()=>window.__V162__.config.repetitionCurve);expect(factors).toEqual([1,.85,.73,.62,.54,.47,.42,.37,.33,.30,.27,.25,.23,.21,.20,.19,.18,.17,.16,.15]);expect(Math.min(...factors)).toBe(.15)});
-test('Quick Fix is a populated primary renderer with minimum presentation',async({page})=>{await category(page,'Quick Fixes');await expect(page.locator('.quickPrimaryTask')).toHaveCount(12);await page.locator('.quickPrimaryTask').first().check();await expect(page.locator('#livePrice')).toHaveText('$130')});
+test('Quick Fix is a populated primary renderer with minimum presentation',async({page})=>{await category(page,'Quick Fixes');await expect(page.locator('.quickPrimaryTask')).toHaveCount(19);await page.locator('.quickPrimaryTask').first().check();await expect(page.locator('#livePrice')).toHaveText('$130')});
 test('quantity parity is 1-20 plus 20+',async({page})=>{await category(page,'Quick Fixes');expect(await page.locator('.quickPrimaryQty').first().locator('option').allTextContents()).toEqual(qs)});
 test('Plumbing fixture switch clears inherited quantity and warning',async({page})=>{await category(page,'Plumbing');await page.locator('#pMode').selectOption('install');await page.locator('#pItem').selectOption({label:'Bathroom faucet'});await page.locator('#pQty').selectOption('6');await page.locator('#pItem').selectOption({label:'Garbage disposal'});await expect(page.locator('#pQty')).toHaveValue('');await page.getByRole('button',{name:'Continue'}).click();await expect(page.getByText('Please answer this question to continue.')).toBeVisible();await page.locator('#pQty').selectOption('1');await expect(page.getByText('Please answer this question to continue.')).toHaveCount(0)});
 test('General Mounting has no diagnostic mode and captures 12 shades in multiple rooms',async({page})=>{await category(page,'General Mounting');await expect(page.locator('#mMode')).toHaveCount(0);await page.locator('#mItem').selectOption({label:'Blinds / shades'});await page.locator('#mQty').selectOption('12');await page.locator('#mLocation').selectOption('Multiple rooms');await expect(page.locator('#mPlane')).toBeVisible();await expect(page.locator('#livePrice')).toHaveText('Pending Review')});
@@ -11,3 +11,4 @@ test('Bundle Efficiency and Technician Discount hide at zero',async({page})=>{aw
 test('repetition cases use configured factors',async({page})=>{await category(page,'Quick Fixes');const box=page.locator('.quickPrimaryTask').first(),qty=page.locator('.quickPrimaryQty').first();await box.check();for(const n of ['1','2','3','5','10','12','20','20+']){await qty.selectOption(n);await expect(page.locator('#livePrice')).not.toHaveText('Review')}});
 // Multi-day, extended-day, partial-price, scope persistence, and category-matrix tests are
 // additionally exercised in the release QA report and preserved V1.6.1 suite.
+

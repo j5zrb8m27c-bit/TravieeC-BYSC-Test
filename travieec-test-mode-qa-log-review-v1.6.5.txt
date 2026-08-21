@@ -1,0 +1,21 @@
+TravieeC BYSC V1.6.5 — Test Mode QA Log Review
+Date: 2026-08-20
+
+Actual visible Test Mode log inspected: YES.
+
+Observed current-session classifications:
+- v1.6.5-loaded
+- slot-selected / availability-generated
+- authorization-failed, classification simulated-payment-authorization
+
+Authorization failure verification:
+- Scope preserved: yes.
+- Estimate preserved: yes.
+- Schedule preserved: yes.
+- False confirmed appointment created: no.
+- Retry offered: yes.
+- QA failure entry emitted: yes.
+
+Retention finding:
+The logger writes to the visible in-page QA log for the current session. No durable remote/file export sink exists, so historical manual QA events from closed sessions could not be recovered. Automated results were reconciled against the current visible log and the permanent authorization-failure regression.
+

@@ -1,0 +1,27 @@
+TravieeC BYSC V1.6.5 — Release Notes
+Date: 2026-08-20
+
+V1.6.5 is a stabilization release. It introduces one authoritative 8-hour capacity boundary, one canonical Review estimate state, one Scheduling-owned appointment date, and one pre-authorization renderer.
+
+Corrected:
+- <=8.0 labor hours uses standard scheduling; >8.0 hours uses Split/Extended routing.
+- Furniture and Electrical multi-item Review is canonical, item-isolated, quantity-editable, and removable.
+- Unknown Review work is no longer represented as $0; known portions remain visible.
+- Electrical diagnostic affected-location count is retained as scope information and no longer creates Review by itself.
+- Furniture qualifiers disclose sequentially and upstream changes invalidate only the affected item.
+- Preferred Day was removed from Address/Contact; Scheduling owns the appointment date.
+- Same-day scheduling retains the Pacific-time 90-minute target with 5-minute tolerance (85-minute minimum), including intersection with approved After-Hours windows.
+- Pre-authorization renders appointment, scope, qualifiers, labor, estimate state, and deposit information once.
+- Quick Fix primary now renders one Remove control and retains pricing privacy.
+- Approved Quick Fix and Standard Quick Fix catalog entries and customer boundaries were added.
+- Refrigerator water-filter replacement conditionally collects filter/model availability.
+
+Preserved:
+- V1.6.4 pricing rules and approved repetition curve.
+- Price efficiency remains separate from labor.
+- Painting coat effects already present in the approved estimator.
+- Vanity replacement photo-review rule.
+- Authorization failure/retry and stable Request ID behavior.
+
+No shared-visit cross-task pricing formula was invented.
+
