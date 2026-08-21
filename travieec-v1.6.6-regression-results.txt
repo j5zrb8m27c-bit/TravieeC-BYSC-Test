@@ -1,0 +1,9 @@
+TravieeC BYSC V1.6.6 — Regression Specification / Results
+Date: 2026-08-21
+
+Specification: tests/v1.6.6-regression.spec.js
+Focused tests: 22 passed, 0 failed.
+Complete preserved matrix: 74 passed, 0 failed.
+
+Coverage includes Split eligibility and completion, capacity blocking, canonical quantities through 20+, blank Electrical Diagnostic state, diagnostic propagation, Furniture editor persistence, terminal Confirmed state, refrigerator-model propagation, service-minimum copy, Quick Fix reconstruction, customer vocabulary, and labor/price separation.
+

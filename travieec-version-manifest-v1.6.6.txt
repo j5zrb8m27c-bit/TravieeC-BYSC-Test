@@ -1,0 +1,13 @@
+Product: TravieeC Book Your Service Call
+Version: 1.6.6
+Release type: Stabilization / state reconstruction / Split completion
+Release date: 2026-08-21
+Executable: travieec-customer-booking-v1.6.6.html
+Deployed root: index.html (byte-identical to executable)
+Source: travieec-customer-booking-v1.6.6-source.txt
+Source archive: travieec-customer-booking-v1.6.6-source.zip
+Browser tests: 74 passed, 0 failed
+V1.6.6 specification: tests/v1.6.6-regression.spec.js
+Prior artifacts: preserved
+TravieeC-booking: not modified
+

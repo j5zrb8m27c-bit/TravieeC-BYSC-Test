@@ -1,0 +1,26 @@
+TravieeC BYSC V1.6.6 — Release Notes
+Date: 2026-08-21
+
+V1.6.6 is a narrow stabilization release covering Split completion, Review quantity integrity, qualifier propagation, terminal confirmation, and Quick Fix state reconstruction.
+
+Corrected:
+- Verified Split/Multi-Day schedules now expose and complete a functional authorization action.
+- Capacity authorization eligibility records required labor, selected windows/capacity, shortfall, Review state, and the exact eligibility reason.
+- Quick Fix Review quantities 1–20 and 20+ now use the same canonical quantity as the title and estimator.
+- Customer-facing “known estimate” and other internal estimator wording were removed.
+- Electrical Diagnostic required selectors start blank and its customer qualifiers propagate through Confirmed.
+- Five affected Electrical locations remain diagnostic scope information and do not independently trigger Review.
+- Furniture item Review editors remain open through recalculation and close only with Done.
+- Booking Confirmed is terminal; Back is removed after Request ID creation.
+- Refrigerator filter procurement/model details propagate through Review, pre-authorization, and Confirmed.
+- A single Quick Fix governed by the minimum is described as included in the configured service-call minimum.
+- Quick Fix Back navigation reconstructs the entire catalog from canonical state.
+
+Preserved:
+- Global 8-hour capacity threshold and capacity arithmetic.
+- Bundle Efficiency formula and labor separation.
+- V1.6.5 estimator behavior and approved pricing rules.
+- Authorization failure/retry, Scheduling date authority, same-day rules, and past-date protections.
+
+No pricing policy or Bundle Efficiency redesign was introduced.
+

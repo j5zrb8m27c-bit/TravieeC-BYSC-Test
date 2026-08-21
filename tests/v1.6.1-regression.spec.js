@@ -37,7 +37,7 @@ test('electrical quantities include 1-10 and 10+ without diagnostic price multip
   await page.locator('#eDiagSymptom').selectOption('No power');
   await page.locator('#eDiagQty').selectOption('10+');
   await expect(page.locator('#livePrice')).toHaveText('$130');
-  await expect(page.locator('#eDiagQty option')).toHaveCount(11);
+  await expect(page.locator('#eDiagQty option')).toHaveCount(12);
 });
 
 test('Quick Fix catalog, quantity persistence, Review quantity edit, and remove/re-add', async ({ page }) => {

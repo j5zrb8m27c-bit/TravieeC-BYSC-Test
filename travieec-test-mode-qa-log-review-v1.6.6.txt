@@ -1,0 +1,25 @@
+TravieeC BYSC V1.6.6 — Test Mode QA / Log Review
+Date: 2026-08-21
+
+Current visible Test Mode logging inspected: YES.
+
+Split eligibility log includes:
+- requiredLaborMinutes
+- selectedServiceDays and windows
+- totalSelectedCapacityMinutes
+- remainingCapacityShortfallMinutes
+- scheduleVerified
+- authorizationEligible
+- reviewRequired
+- reason
+
+Observed eligibility reasons:
+- eligible
+- insufficient_capacity
+- schedule_not_verified
+- scope_review_required
+
+Successful Split authorization emits capacity-authorization-attempt and capacity-appointment-created. No sensitive payment data is logged.
+
+Historical closed-session limitation remains: Test Mode has no durable external log sink. Current-session visible events and permanent browser assertions were inspected.
+
